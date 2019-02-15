@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 // Load User model
 const User = require('../models/user');
+const { ensureAuthenticated } = require('../config/auth');
+const mongoose = require("mongoose");
 
 // Login Page
 router.get('/login', (req, res) => res.render('login'));
@@ -49,6 +51,7 @@ router.post('/register', (req, res) => {
         });
       } else {
         const newUser = new User({
+          _id: new mongoose.Types.ObjectId(),
           name,
           email,
           password
@@ -90,5 +93,44 @@ router.get('/logout', (req, res) => {
   req.flash('success_msg', 'You are logged out');
   res.redirect('/users/login');
 });
+
+router.get('/ManageUsers',  ensureAuthenticated, (req, res) => res.render('ManageUsers', {
+  user: req.user
+})
+);
+
+router.get('/listAllUsers',  ensureAuthenticated, (req, res) => {
+  User.find({}, (err, users) => {
+    if (err) {
+      res.send(err);
+    }
+
+    res.json(users);
+  });
+
+});
+
+router.delete('/:id', ensureAuthenticated,  (req, res) => {
+  User.findByIdAndRemove(req.params.id, function (err, user) {
+    if (err) res.send(err);
+    req.flash('success_msg', 'Data Deleted!');
+    res.json(user);
+  });
+
+});
+
+router.put('/:id', ensureAuthenticated, (req, res) => {
+
+  User.findByIdAndUpdate(req.params.id, req.body, { new: true }, function (err, user) {
+    if (err) res.send(err);
+
+    req.flash('success_msg', 'Data Updated!');
+    res.json(user);
+  });
+
+
+});
+
+
 
 module.exports = router;

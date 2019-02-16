@@ -1,21 +1,98 @@
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
 <script src='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
 <link href='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css' rel='stylesheet' />
+<!-- mapbox-gl-directions -->
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js'></script>
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css'
+    type='text/css' />
 
-  <div id='map' style='width: 900px; height: 500px;'></div>
-  <script>
-  mapboxgl.accessToken = 'pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw';
-  var map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/streets-v11',
-center: [-74.50, 40], // starting position
-zoom: 9 // starting zoom
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    #map {
+        /* position: absolute; */
+        top: 0;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
 
 
-  });
 
-  // Add zoom and rotation controls to the map.
-map.addControl(new mapboxgl.NavigationControl());
+<div id='map' style='width: 900px; height: 500px;'></div>
 
 
-  </script>
+<script>
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-96, 37.8], // starting position
+        zoom: 9 // starting zoom
+
+    });
+    map.addControl(new MapboxDirections({
+        accessToken: mapboxgl.accessToken
+    }), 'top-left');
+    // Add zoom and rotation controls to the map.
+    map.addControl(new mapboxgl.NavigationControl());
+
+    // Add geolocate control to the map.
+    map.addControl(new mapboxgl.GeolocateControl({
+        positionOptions: {
+            enableHighAccuracy: true
+        },
+        trackUserLocation: true
+    }));
+
+</script>
+
+<div id='map2' style='width: 900px; height: 500px;'></div>
+
+
+<script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/topojson.v0.min.js"></script>
+	<link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.2/dist/leaflet.css" />
+	 <script src="https://npmcdn.com/leaflet@1.0.0-rc.2/dist/leaflet.js"></script>
+
+<div id='mapid' style='width: 900px; height: 500px;'></div>
+<script>
+
   
+
+    navigator.geolocation.getCurrentPosition(function(location) {
+  var latlng = new L.LatLng(location.coords.latitude, location.coords.longitude);
+
+  var mymap = L.map('mapid').setView(latlng, 13)
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw'
+  }).addTo(mymap);
+
+  var marker = L.marker(latlng).addTo(mymap);
+});
+
+
+navigator.geolocation.getCurrentPosition(function(location) {
+  var latlng = new L.LatLng(location.coords.latitude, location.coords.longitude);
+
+  var mymap = L.map('map2').setView(latlng, 13)
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw'
+  }).addTo(mymap);
+
+  var marker = L.marker(latlng).addTo(mymap);
+});
+</script>
+
+ 

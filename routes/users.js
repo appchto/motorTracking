@@ -5,7 +5,6 @@ const passport = require('passport');
 // Load User model
 const User = require('../models/user');
 const { ensureAuthenticated } = require('../config/auth');
-const mongoose = require("mongoose");
 
 // Login Page
 router.get('/login', (req, res) => res.render('login'));
@@ -51,7 +50,6 @@ router.post('/register', (req, res) => {
         });
       } else {
         const newUser = new User({
-          _id: new mongoose.Types.ObjectId(),
           name,
           email,
           password

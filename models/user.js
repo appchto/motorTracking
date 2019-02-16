@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 var passportlocalmongoose = require("passport-local-mongoose");
 
 const UserSchema = new mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
-
   name: {
     type: String,
     required: true
@@ -18,9 +16,15 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  manager: {
+    type: Boolean 
+  },
   date_created: {
     type: Date,
     default: Date.now
+  },
+  last_access: {
+    type: Date
   }
 
 });

@@ -11,6 +11,14 @@ router.get('/Managerdashboard', ensureAuthenticated, (req, res) =>
   })
 );
 
+router.get('/ManageClients', ensureAuthenticated, (req, res) =>
+  res.render('ManageClients', {
+    user: req.user
+  })
+);
+
+
+
 
 router.get('/deletedb', ensureAuthenticated, (req, res) => {
   

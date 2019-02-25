@@ -7,27 +7,9 @@
 <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css'
     type='text/css' />
 
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    #map {
-        /* position: absolute; */
-        top: 0;
-        bottom: 0;
-        width: 100%;
-    }
-</style>
-
-
-
-<div id='map' style='width: 900px; height: 500px;'></div>
-
+<div id='map' class="map"div>
 
 <script>
-
     mapboxgl.accessToken = 'pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw';
     var map = new mapboxgl.Map({
         container: 'map',
@@ -42,57 +24,142 @@
     // Add zoom and rotation controls to the map.
     map.addControl(new mapboxgl.NavigationControl());
 
-    // Add geolocate control to the map.
-    map.addControl(new mapboxgl.GeolocateControl({
-        positionOptions: {
-            enableHighAccuracy: true
-        },
-        trackUserLocation: true
-    }));
+     // Add geolocate control to the map.
+     const geolocate = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true,
+      showUserLocation: true
+    });
+    map.addControl(geolocate);
+    map.on("load", function() {
+      geolocate.trigger();
+    });
+    geolocate.on("geolocate", function(data) {
+      var userlocation = geolocate._lastKnownPosition;
+      console.log(userlocation);
+      console.log(data);
+
+      var lat = userlocation.coords.latitude;
+      var lng = userlocation.coords.longitude;
+      console.log(userlocation.coords);
+      var latLngObjs = {
+        lat: "",
+        lng: ""
+      };
+      latLngObjs.lat = lat;
+      latLngObjs.lng = lng;
+      localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
+    });
+    var LatLngFromStorage = localStorage.getItem("LatLng");
+    LatLng = JSON.parse(LatLngFromStorage);
+
+    console.log(LatLng.lat);
+    console.log(LatLng.lng);
+
+
+    // request driver
+    requestDetails = {
+      citizenId: userId,
+      location: {
+        address:
+          "Rua Marieta Billet, Jardim Nova República, São Gonçalo - Rio De Janeiro, 24745, Brazil",
+        latitude: LatLng.lat,
+        longitude: LatLng.lng
+      }
+    };
+    console.log(requestDetails);
+    function requestForHelp() {
+      //When button is clicked, emit an event
+      socket.emit("request-for-help", requestDetails);
+      console.log("request-for-help");
+      console.log(requestDetails);
+    }
+    //Listen for a 'request-accepted' event
+    socket.on("request-accepted", function(data) {
+      copDetails = data; //Save cop details
+      //Display Cop details
+      document.getElementById("notification").innerHTML =
+        "A cop is coming to your rescue! \n" + JSON.stringify(copDetails);
+      //Show cop location on the map
+      L.marker(
+        [copDetails.location.latitude, copDetails.location.longitude],
+        {
+          icon: L.icon({
+            iconUrl: "/images/police.png",
+            iconSize: [60, 28]
+          })
+        }
+      ).addTo(map);
+    });
 
 </script>
 
-<div id='map2' style='width: 900px; height: 500px;'></div>
+
+<script type="text/javascript">
+    var fillObjs = [];
+    var requestDetails = {};
+    var req_coordinates = "";
+    var req_latitude = "";
+    var req_longitude = "";
+    var userId = document.body.getAttribute("data-userId");
+
+    var socket = io();
+    socket.emit("join", {
+      userId: userId
+    }); //Join a room, roomname is the userId itself!
+    //Empty variables to store information. This will get filled later
+
+    var copDetails = {};
+    var map, marker;
+
+    var geocoderControl = L.mapbox.geocoderControl("mapbox.places", {
+      keepOpen: false,
+      autocomplete: true
+    });
+    geocoderControl.addTo(map);
+
+    geocoderControl.on("select", function(object) {
+      var coord = object.feature.geometry.coordinates;
+      L.marker([coord[1], coord[0]]).addTo(map);
+    });
+
+    map.addControl(
+      new MapboxDirections({
+        accessToken: mapboxgl.accessToken
+      }),
+      "top-left"
+    );
+
+    map.on("click", function(e) {
+      // coordinates = e.lngLat;
+      // console.log(coordinates.lng);
+    });
+
+    map.on("load", function(e) {
+      // req_coordinates = e.lngLat;
+      // // map.flyTo({
+      // //   center: req_coordinates
+      // //   // center: [-43.00603, -22.85096]
+      // // });
+      // var marker = new mapboxgl.Marker()
+      //   .setLngLat([-43.00603, -22.85096])
+      //   .addTo(map);
+    });
 
 
-<script src="https://d3js.org/d3.v3.min.js"></script>
-    <script src="https://d3js.org/topojson.v0.min.js"></script>
-	<link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.2/dist/leaflet.css" />
-	 <script src="https://npmcdn.com/leaflet@1.0.0-rc.2/dist/leaflet.js"></script>
-
-<div id='mapid' style='width: 900px; height: 500px;'></div>
-<script>
-
-  
-
-    navigator.geolocation.getCurrentPosition(function(location) {
-  var latlng = new L.LatLng(location.coords.latitude, location.coords.longitude);
-
-  var mymap = L.map('mapid').setView(latlng, 13)
-  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://mapbox.com">Mapbox</a>',
-    maxZoom: 18,
-    id: 'mapbox.streets',
-    accessToken: 'pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw'
-  }).addTo(mymap);
-
-  var marker = L.marker(latlng).addTo(mymap);
-});
-
-
-navigator.geolocation.getCurrentPosition(function(location) {
-  var latlng = new L.LatLng(location.coords.latitude, location.coords.longitude);
-
-  var mymap = L.map('map2').setView(latlng, 13)
-  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://mapbox.com">Mapbox</a>',
-    maxZoom: 18,
-    id: 'mapbox.streets',
-    accessToken: 'pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw'
-  }).addTo(mymap);
-
-  var marker = L.marker(latlng).addTo(mymap);
-});
-</script>
+    // end of navigator.geolocation
+  </script>
 
  
+<style>
+    .map {
+        width: 100%;
+        height: 800px;
+        min-height: 400px !important;
+
+    }
+
+
+</style>

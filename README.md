@@ -19,7 +19,5 @@ $ npm run dev
 # Visit http://localhost:5001
 ```
 
-### MongoDB
 
-Open "config/keys.js" and add your MongoDB URI, local or Atlas
-
+***

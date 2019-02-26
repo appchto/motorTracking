@@ -112,18 +112,18 @@
     if (lat != latLngObjs.lat && lng != latLngObjs.lng) {
       console.log('Diferent position')
       
-    //   coordList.push({lat : latLngObjs.lat , lng: latLngObjs.lng});
-    // localStorage.setItem("coordList", JSON.stringify(coordList));
+      coordList.push({lat : latLngObjs.lat , lng: latLngObjs.lng});
+    localStorage.setItem("coordList", JSON.stringify(coordList));
 
-    // console.log('coordinates');
-    // console.log(coordList);
-    // marker = new mapboxgl.Marker()
-    //   .setLngLat(coordinates)
-    //   .setPopup(
-    //     new mapboxgl.Popup({ offset: 25 }) // add popups
-    //       .setHTML("<h3>" + marker + "</h3><p>" + coordinates + "</p>")
-    //   )
-    //   .addTo(map);
+    console.log('coordinates');
+    console.log(coordList);
+    marker = new mapboxgl.Marker()
+      .setLngLat(coordinates)
+      .setPopup(
+        new mapboxgl.Popup({ offset: 25 }) // add popups
+          .setHTML("<h3>" + marker + "</h3><p>" + coordinates + "</p>")
+      )
+      .addTo(map);
 
       // var marker = new mapboxgl.Marker()
       // .setLngLat([LatLng.lng, LatLng.lat])
@@ -175,12 +175,8 @@
   // });
   
   var stgetcoordList = localStorage.getItem("coordList");
-  console.log('stgetcoordList');
-    console.log(stgetcoordList);
 
   coordList.push(JSON.parse(stgetcoordList));
-  console.log('coordList');
-    console.log(coordList);
 
   if (stgetcoordList != null && stgetcoordList.length > 0) {
     console.log('stgetcoordList');

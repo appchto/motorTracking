@@ -11,7 +11,7 @@ router.get('/map', ensureAuthenticated, (req, res) => res.render('map', {
   user: req.user,
 })
 );
-router.get('/maptracker', ensureAuthenticated, (req, res) => res.render('maptracker', {
+router.get('/map2', ensureAuthenticated, (req, res) => res.render('map2', {
   user: req.user,
 })
 );

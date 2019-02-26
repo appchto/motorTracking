@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const flash = require('connect-flash');
 const session = require('express-session');
+var http = require("http");
+var routes = require("./routes/routes"); //File that contains our endpoints
 
 require('./config/passport')(passport);
 const app = express();
@@ -49,6 +51,7 @@ app.use(function(req, res, next) {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
   res.locals.error = req.flash('error');
+  res.locals.user = req.flash('user');
   next();
 });
 
@@ -59,4 +62,21 @@ app.use('/clients', require('./routes/clients.js'));
 
 const PORT = process.env.PORT || 5001;
 
-app.listen(PORT, console.log(`Server started on port ${PORT}`));
+// app.listen(PORT, console.log(`Server started on port ${PORT}`));
+
+var server = http.Server(app);
+var io = require("socket.io")(server); //Creating a new socket.io instance by passing the HTTP server object
+server.listen(PORT, function() {
+  io.on("connection", function(socket) {
+    //Listen on the 'connection' event for incoming sockets
+    console.log("A user just connected");
+
+    socket.on("join", function(data) {
+      //Listen to any join event from connected users
+      socket.join(data.user); //User joins a unique room/channel that's named after the userId
+      console.log("User joined room: " + data.user);
+    });
+
+    routes.initialize(app, db, socket, io); //Pass socket and io objects that we could use at different parts of our app
+  });
+});

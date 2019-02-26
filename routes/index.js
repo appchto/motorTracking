@@ -8,8 +8,12 @@ router.get('/', (req, res) => res.render('welcome', {
 }));
 
 router.get('/map', ensureAuthenticated, (req, res) => res.render('map', {
-  user: req.user
-}));
+  user: req.user,
+  userId: req.query,
+  userparams: req.params
+})
+);
+
 
 router.get('/about', (req, res) => res.render('about', {
   user: req.user

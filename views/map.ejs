@@ -12,9 +12,13 @@
 <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js'></script>
 <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css'
     type='text/css' />
-    <!-- <script src="/socket.io/socket.io.js"></script> -->
 
-<div id='map' class="map"div>
+    <script src="/socket.io/socket.io.js"></script>
+
+<span class="lead mb-3" >Welcome</span>
+<span id='user' class="lead mb-3"> <%= user.name %></span>
+
+<div id='map' class="map"> </div>
 
 <script>
 
@@ -23,12 +27,12 @@ var fillObjs = [];
     var req_coordinates = "";
     var req_latitude = "";
     var req_longitude = "";
-    var userId = document.body.getAttribute("data-userId");
+    var user = document.getElementById("user").textContent;
 
-    // var socket = io();
-    // socket.emit("join", {
-    //   userId: userId
-    // }); 
+    var socket = io();
+    socket.emit("join", {
+      user: user
+    }); 
     //Join a room, roomname is the userId itself!
     //Empty variables to store information. This will get filled later
 
@@ -63,12 +67,9 @@ var fillObjs = [];
     });
     geolocate.on("geolocate", function(data) {
       var userlocation = geolocate._lastKnownPosition;
-      console.log(userlocation);
-      console.log(data);
 
       var lat = userlocation.coords.latitude;
       var lng = userlocation.coords.longitude;
-      console.log(userlocation.coords);
       var latLngObjs = {
         lat: "",
         lng: ""
@@ -80,27 +81,23 @@ var fillObjs = [];
     var LatLngFromStorage = localStorage.getItem("LatLng");
     LatLng = JSON.parse(LatLngFromStorage);
 
-    console.log(getLatLng().lat);
-    console.log(getLatLng().lng);
-
-
-    // request driver
-    requestDetails = {
-      citizenId: userId,
+   // request driver
+   requestDetails = {
+      citizenId: user,
       location: {
-        address:
-          "Rua Marieta Billet, Jardim Nova República, São Gonçalo - Rio De Janeiro, 24745, Brazil",
+        address: LatLng,
         latitude: LatLng.lat,
         longitude: LatLng.lng
       }
     };
-    console.log(requestDetails);
-    function requestForHelp() {
-      //When button is clicked, emit an event
-      socket.emit("request-for-help", requestDetails);
-      console.log("request-for-help");
-      console.log(requestDetails);
-    }
+ 
+    console.log(requestDetails );
+    // function requestForHelp() {
+    //   //When button is clicked, emit an event
+    //   socket.emit("request-for-help", requestDetails);
+    //   console.log("request-for-help");
+    //   console.log(requestDetails);
+    // }
     //Listen for a 'request-accepted' event
     // socket.on("request-accepted", function(data) {
     //   copDetails = data; //Save cop details
@@ -134,11 +131,7 @@ var fillObjs = [];
       //   .setLngLat([-43.00603, -22.85096])
       //   .addTo(map);
     });
-    map.addControl(new MapboxGeocoder({
-accessToken: mapboxgl.accessToken
-}));
 
-   
 function getLatLng()
 {
     var LatLngFromStorage = localStorage.getItem("LatLng");

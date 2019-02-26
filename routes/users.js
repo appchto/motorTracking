@@ -7,10 +7,14 @@ const User = require('../models/user');
 const { ensureAuthenticated } = require('../config/auth');
 
 // Login Page
-router.get('/login', (req, res) => res.render('login'));
+router.get('/login', (req, res) => res.render('login', {
+  user : req.user
+}));
 
 // Register Page
-router.get('/register', (req, res) => res.render('register'));
+router.get('/register', (req, res) => res.render('register', {
+  user : req.user
+}));
 
 // Register
 router.post('/register', (req, res) => {

@@ -120,16 +120,18 @@
         localStorage.setItem("coordList", JSON.stringify(latLngObjs));
 
         var stgetcoordList = localStorage.getItem("coordList");
-        coordList.push(JSON.parse(stgetcoordList))
+        coordList.push(JSON.parse(stgetcoordList));
 
+        // coordinates needs to be = lngLat;
         console.log("coordList");
         console.log(coordList);
-        var setupLgnLat = [coordList.lng, coordList.lat];
+    var lnglattreated = [LatLng.lng, LatLng.lat];
+
         marker = new mapboxgl.Marker()
-          .setLngLat(setupLgnLat)
+          .setLngLat(lnglattreated)
           .setPopup(
             new mapboxgl.Popup({ offset: 25 }) // add popups
-              .setHTML("<h3>" + marker + "</h3><p>" + setupLgnLat + "</p>")
+              .setHTML("<h3>" + marker + "</h3><p>" + lnglattreated + "</p>")
           )
           .addTo(map);
       } else {
@@ -149,7 +151,7 @@
   };
 
   var stgetcoordList = localStorage.getItem("coordList");
-  coordList.push(JSON.parse(stgetcoordList)) 
+  coordList.push(JSON.parse(stgetcoordList));
   console.log("coordList.length");
   console.log(coordList.length);
 
@@ -175,7 +177,7 @@
   }
 
   map.on("click", function(e) {
-    coordinates = e.LatLng;
+    coordinates = e.lngLat;
     // coordinates = lngLat
     console.log("coordinates");
     console.log(coordinates);

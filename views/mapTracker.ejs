@@ -89,9 +89,9 @@ console.log(map_first_location)
   map.addControl(geolocate);
   map.on("load", function(e) {
     geolocate.trigger();
-    var marker = new mapboxgl.Marker()
-      .setLngLat([LatLng.lng, LatLng.lat])
-      .addTo(map);
+    // var marker = new mapboxgl.Marker()
+    //   .setLngLat([LatLng.lng, LatLng.lat])
+    //   .addTo(map);
   });
   geolocate.on("geolocate", function(data) {
     var userlocation = geolocate._lastKnownPosition;

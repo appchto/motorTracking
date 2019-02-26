@@ -47,6 +47,10 @@ var map_first_location = '';
   });
   //Join a room, roomname is the userId itself!
   console.log(last_coords)
+  var LatLngFromStorage = localStorage.getItem("LatLng");
+  LatLng = JSON.parse(LatLngFromStorage);
+  console.log('LatLng')
+  console.log(LatLng)
 
   if (last_coords != null) {
     var localStorage_map_first_location = localStorage.getItem("LatLng");
@@ -136,8 +140,7 @@ console.log(map_first_location)
   // }, 60000);
 
   });
-  var LatLngFromStorage = localStorage.getItem("LatLng");
-  LatLng = JSON.parse(LatLngFromStorage);
+
 
   // request driver
   requestDetails = {

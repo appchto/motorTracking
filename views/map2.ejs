@@ -36,7 +36,7 @@
   var req_longitude = "";
   var user = document.getElementById("user").textContent;
   var last_coords = "";
-  // var last_coords = localStorage.getItem("last_coords");
+  var last_coords = localStorage.getItem("last_coords");
   var copDetails = {};
   var map, marker;
   var coordList = [];
@@ -108,36 +108,36 @@ console.log(map_first_location)
     localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
     console.log('latLngObjs')
     console.log(latLngObjs)
-    // var initialcoords = {lat : latLngObjs.lat , lng: latLngObjs.lng}
-    // coordList.push([latLngObjs.lng, latLngObjs.lat])
-    // localStorage.setItem("coordList", JSON.stringify(coordList));
+    var initialcoords = {lat : latLngObjs.lat , lng: latLngObjs.lng}
+    coordList.push([latLngObjs.lng, latLngObjs.lat])
+    localStorage.setItem("coordList", JSON.stringify(coordList));
 
     
-  //   var timer = window.setInterval(function() {
-  //   if (lat != latLngObjs.lat && lng != latLngObjs.lng) {
-  //     console.log('Diferent position')
+    var timer = window.setInterval(function() {
+    if (lat != latLngObjs.lat && lng != latLngObjs.lng) {
+      console.log('Diferent position')
       
-  //     coordList.push({lat : latLngObjs.lat , lng: latLngObjs.lng});
-  //   localStorage.setItem("coordList", JSON.stringify(coordList));
+      coordList.push({lat : latLngObjs.lat , lng: latLngObjs.lng});
+    localStorage.setItem("coordList", JSON.stringify(coordList));
 
-  //   console.log('coordinates');
-  //   console.log(coordList);
-  //   marker = new mapboxgl.Marker()
-  //     .setLngLat(coordinates)
-  //     .setPopup(
-  //       new mapboxgl.Popup({ offset: 25 }) // add popups
-  //         .setHTML("<h3>" + marker + "</h3><p>" + coordinates + "</p>")
-  //     )
-  //     .addTo(map);
+    console.log('coordinates');
+    console.log(coordList);
+    marker = new mapboxgl.Marker()
+      .setLngLat(coordinates)
+      .setPopup(
+        new mapboxgl.Popup({ offset: 25 }) // add popups
+          .setHTML("<h3>" + marker + "</h3><p>" + coordinates + "</p>")
+      )
+      .addTo(map);
 
-  //     // var marker = new mapboxgl.Marker()
-  //     // .setLngLat([LatLng.lng, LatLng.lat])
-  //     // .addTo(map);
-  //   } else {
-  //     // window.clearInterval(timer);
-  //     console.log('Same location')
-  //   }
-  // }, 60000);
+      // var marker = new mapboxgl.Marker()
+      // .setLngLat([LatLng.lng, LatLng.lat])
+      // .addTo(map);
+    } else {
+      // window.clearInterval(timer);
+      console.log('Same location')
+    }
+  }, 60000);
 
   });
 
@@ -178,27 +178,27 @@ console.log(map_first_location)
   //   ).addTo(map);
   // });
   
-  // var stgetcoordList = localStorage.getItem("coordList");
+  var stgetcoordList = localStorage.getItem("coordList");
 
-  // coordList.push(JSON.parse(stgetcoordList));
+  coordList.push(JSON.parse(stgetcoordList));
 
-  // if (stgetcoordList != null && stgetcoordList.length > 0) {
-  //   console.log('stgetcoordList');
-  //   console.log(stgetcoordList);
-  //   coordList.forEach(function(setmarker) {
-  //     // create a DOM element for the marker
-  //     var el = document.createElement("div");
-  //     el.className = "marker";
-  //     el.style.backgroundImage = "public/images/dog_paw.png";
+  if (stgetcoordList != null && stgetcoordList.length > 0) {
+    console.log('stgetcoordList');
+    console.log(stgetcoordList);
+    coordList.forEach(function(setmarker) {
+      // create a DOM element for the marker
+      var el = document.createElement("div");
+      el.className = "marker";
+      el.style.backgroundImage = "public/images/dog_paw.png";
 
-  //     el.addEventListener("click", function() {
-  //       window.alert("your dog has been here");
-  //     });
+      el.addEventListener("click", function() {
+        window.alert("your dog has been here");
+      });
 
-  //     // add marker to map
-  //     new mapboxgl.Marker(el).setLngLat([setmarker.lng, setmarker.lat]).addTo(map);
-  //   });
-  // }
+      // add marker to map
+      new mapboxgl.Marker(el).setLngLat([setmarker.lng, setmarker.lat]).addTo(map);
+    });
+  }
   
   map.on("click", function(e) {
     coordinates = e.lngLat;

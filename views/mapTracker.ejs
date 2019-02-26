@@ -70,6 +70,7 @@
   // }), 'top-left');
   // Add zoom and rotation controls to the map.
   map.addControl(new mapboxgl.NavigationControl());
+  map.addControl(new mapboxgl.FullscreenControl());
 
   // Add geolocate control to the map.
   const geolocate = new mapboxgl.GeolocateControl({

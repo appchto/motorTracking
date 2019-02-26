@@ -35,17 +35,18 @@
   var req_latitude = "";
   var req_longitude = "";
   var user = document.getElementById("user").textContent;
-  var last_coords;
+  var last_coords = "";
   // var last_coords = localStorage.getItem("last_coords");
   var copDetails = {};
-  var map, marker, map_first_location;
+  var map, marker;
   var coordList = [];
-
+var map_first_location = '';
   var socket = io();
   socket.emit("join", {
     user: user
   });
   //Join a room, roomname is the userId itself!
+  console.log(last_coords)
 
   if (last_coords != null) {
     var localStorage_map_first_location = localStorage.getItem("LatLng");
@@ -57,7 +58,7 @@
   } else {
     map_first_location = [0, 0];
   }
-
+console.log(map_first_location)
   mapboxgl.accessToken =
     "pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw";
   map = new mapboxgl.Map({

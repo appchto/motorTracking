@@ -9,11 +9,12 @@ router.get('/', (req, res) => res.render('welcome', {
 
 router.get('/map', ensureAuthenticated, (req, res) => res.render('map', {
   user: req.user,
-  userId: req.query,
-  userparams: req.params
 })
 );
-
+router.get('/maptracker', ensureAuthenticated, (req, res) => res.render('maptracker', {
+  user: req.user,
+})
+);
 
 router.get('/about', (req, res) => res.render('about', {
   user: req.user

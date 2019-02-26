@@ -26,6 +26,7 @@ mongoose
 // EJS
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
+app.use(express.static("./public")); //setting the folder name (public) where all the static files like css, js, images etc are made available
 
 // Express body parser
 app.use(express.urlencoded({ extended: true }));

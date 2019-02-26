@@ -103,15 +103,31 @@
     localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
     console.log('latLngObjs')
     console.log(latLngObjs)
+    // var initialcoords = {lat : latLngObjs.lat , lng: latLngObjs.lng}
+    // coordList.push([latLngObjs.lng, latLngObjs.lat])
+    // localStorage.setItem("coordList", JSON.stringify(coordList));
 
     
     var timer = window.setInterval(function() {
     if (lat != latLngObjs.lat && lng != latLngObjs.lng) {
       console.log('Diferent position')
       
-      var marker = new mapboxgl.Marker()
-      .setLngLat([LatLng.lng, LatLng.lat])
-      .addTo(map);
+    //   coordList.push({lat : latLngObjs.lat , lng: latLngObjs.lng});
+    // localStorage.setItem("coordList", JSON.stringify(coordList));
+
+    // console.log('coordinates');
+    // console.log(coordList);
+    // marker = new mapboxgl.Marker()
+    //   .setLngLat(coordinates)
+    //   .setPopup(
+    //     new mapboxgl.Popup({ offset: 25 }) // add popups
+    //       .setHTML("<h3>" + marker + "</h3><p>" + coordinates + "</p>")
+    //   )
+    //   .addTo(map);
+
+      // var marker = new mapboxgl.Marker()
+      // .setLngLat([LatLng.lng, LatLng.lat])
+      // .addTo(map);
     } else {
       // window.clearInterval(timer);
       console.log('Same location')
@@ -121,12 +137,6 @@
   });
   var LatLngFromStorage = localStorage.getItem("LatLng");
   LatLng = JSON.parse(LatLngFromStorage);
-
-
-
-
-
-
 
   // request driver
   requestDetails = {
@@ -163,13 +173,19 @@
   //     }
   //   ).addTo(map);
   // });
-
+  
   var stgetcoordList = localStorage.getItem("coordList");
-  if (stgetcoordList.length > 0) {
+  console.log('stgetcoordList');
+    console.log(stgetcoordList);
+
+  coordList.push(JSON.parse(stgetcoordList));
+  console.log('coordList');
+    console.log(coordList);
+
+  if (stgetcoordList != null && stgetcoordList.length > 0) {
     console.log('stgetcoordList');
     console.log(stgetcoordList);
-    coordList = JSON.parse(stgetcoordList);
-    coordList.forEach(function(marker) {
+    coordList.forEach(function(setmarker) {
       // create a DOM element for the marker
       var el = document.createElement("div");
       el.className = "marker";
@@ -180,17 +196,17 @@
       });
 
       // add marker to map
-      new mapboxgl.Marker(el).setLngLat([marker.lng, marker.lat]).addTo(map);
+      new mapboxgl.Marker(el).setLngLat([setmarker.lng, setmarker.lat]).addTo(map);
     });
   }
-
   
   map.on("click", function(e) {
     coordinates = e.lngLat;
+    console.log('coordinates');
+    console.log(coordinates);
     coordList.push(coordinates);
     localStorage.setItem("coordList", JSON.stringify(coordList));
 
-    console.log('coordinates');
     console.log(coordList);
     marker = new mapboxgl.Marker()
       .setLngLat(coordinates)

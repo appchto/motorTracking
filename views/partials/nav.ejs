@@ -24,10 +24,10 @@
 
               <% if(typeof user != 'undefined'){ %>
                 <% if( user.name == 'Jose Barbosa'){ %>
-                    <li class="nav-item">
+                    <li >
                             <a class="nav-link" href="/users/ManageUsers">ManageUsers</a>
                         </li>
-                        <li class="nav-item">
+                        <li >
                             <a class="nav-link" href="/clients/ManageClients">ManageClients</a>
                         </li>
                     <% } %>
@@ -38,11 +38,15 @@
         <ul class="nav navbar-nav navbar-right">
 
                 <% if(typeof user != 'undefined'){ %>
-                    <li>    <span class="">Welcome <%= user.name %></span>
-                        <a href="/users/logout" class="">Logout</a></li>
+                    <div class="form-group">
+
+                    <li>    <span style="color:white">Logged as <%= user.name %></span>
+                        <a href="/users/logout" > <span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    </div>
+
                     <% } %>
                     <% if(typeof user == 'undefined'){ %>
-                        <li>  <a href="/users/login" class="glyphicon glyphicon-log-in">Login</a></li>
+                        <li>  <a href="/users/login" > <span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                         <% } %>
 
         </ul>

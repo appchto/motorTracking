@@ -1,21 +1,46 @@
 <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-
+<style>
+        .map {
+            height: 600px;
+        }
+    
+    
+    </style>
 <script src='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
 <link href='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css' rel='stylesheet' />
 <!-- mapbox-gl-directions -->
 <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js'></script>
 <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css'
     type='text/css' />
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
 
 <div id='map' class="map"div>
 
 <script>
+
+var fillObjs = [];
+    var requestDetails = {};
+    var req_coordinates = "";
+    var req_latitude = "";
+    var req_longitude = "";
+    var userId = document.body.getAttribute("data-userId");
+
+    // var socket = io();
+    // socket.emit("join", {
+    //   userId: userId
+    // }); 
+    //Join a room, roomname is the userId itself!
+    //Empty variables to store information. This will get filled later
+
+    var copDetails = {};
+    var map, marker;
+
     mapboxgl.accessToken = 'pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw';
-    var map = new mapboxgl.Map({
+      map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
-        center: [-96, 37.8], // starting position
-        zoom: 9 // starting zoom
+        center: [0, 0], // starting position
+        zoom: 13 // starting zoom
 
     });
     map.addControl(new MapboxDirections({
@@ -55,8 +80,8 @@
     var LatLngFromStorage = localStorage.getItem("LatLng");
     LatLng = JSON.parse(LatLngFromStorage);
 
-    console.log(LatLng.lat);
-    console.log(LatLng.lng);
+    console.log(getLatLng().lat);
+    console.log(getLatLng().lng);
 
 
     // request driver
@@ -77,60 +102,22 @@
       console.log(requestDetails);
     }
     //Listen for a 'request-accepted' event
-    socket.on("request-accepted", function(data) {
-      copDetails = data; //Save cop details
-      //Display Cop details
-      document.getElementById("notification").innerHTML =
-        "A cop is coming to your rescue! \n" + JSON.stringify(copDetails);
-      //Show cop location on the map
-      L.marker(
-        [copDetails.location.latitude, copDetails.location.longitude],
-        {
-          icon: L.icon({
-            iconUrl: "/images/police.png",
-            iconSize: [60, 28]
-          })
-        }
-      ).addTo(map);
-    });
-
-</script>
-
-
-<script type="text/javascript">
-    var fillObjs = [];
-    var requestDetails = {};
-    var req_coordinates = "";
-    var req_latitude = "";
-    var req_longitude = "";
-    var userId = document.body.getAttribute("data-userId");
-
-    var socket = io();
-    socket.emit("join", {
-      userId: userId
-    }); //Join a room, roomname is the userId itself!
-    //Empty variables to store information. This will get filled later
-
-    var copDetails = {};
-    var map, marker;
-
-    var geocoderControl = L.mapbox.geocoderControl("mapbox.places", {
-      keepOpen: false,
-      autocomplete: true
-    });
-    geocoderControl.addTo(map);
-
-    geocoderControl.on("select", function(object) {
-      var coord = object.feature.geometry.coordinates;
-      L.marker([coord[1], coord[0]]).addTo(map);
-    });
-
-    map.addControl(
-      new MapboxDirections({
-        accessToken: mapboxgl.accessToken
-      }),
-      "top-left"
-    );
+    // socket.on("request-accepted", function(data) {
+    //   copDetails = data; //Save cop details
+    //   //Display Cop details
+    //   document.getElementById("notification").innerHTML =
+    //     "A cop is coming to your rescue! \n" + JSON.stringify(copDetails);
+    //   //Show cop location on the map
+    //   L.marker(
+    //     [copDetails.location.latitude, copDetails.location.longitude],
+    //     {
+    //       icon: L.icon({
+    //         iconUrl: "/images/police.png",
+    //         iconSize: [60, 28]
+    //       })
+    //     }
+    //   ).addTo(map);
+    // });
 
     map.on("click", function(e) {
       // coordinates = e.lngLat;
@@ -147,19 +134,18 @@
       //   .setLngLat([-43.00603, -22.85096])
       //   .addTo(map);
     });
+    map.addControl(new MapboxGeocoder({
+accessToken: mapboxgl.accessToken
+}));
 
+   
+function getLatLng()
+{
+    var LatLngFromStorage = localStorage.getItem("LatLng");
+    LatLng = JSON.parse(LatLngFromStorage);
+    return LatLng
+}
 
-    // end of navigator.geolocation
-  </script>
-
+</script>
  
-<style>
-    .map {
-        width: 100%;
-        height: 800px;
-        min-height: 400px !important;
 
-    }
-
-
-</style>

@@ -1,238 +1,144 @@
-<meta
-  name="viewport"
-  content="initial-scale=1,maximum-scale=1,user-scalable=no"
-/>
-
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 <style>
-  .map {
-    height: 600px;
-  }
-</style>
-<script src="https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js"></script>
-<link
-  href="https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css"
-  rel="stylesheet"
-/>
+        .map {
+            height: 600px;
+        }
+    
+    
+    </style>
+<script src='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css' rel='stylesheet' />
 <!-- mapbox-gl-directions -->
-<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js"></script>
-<link
-  rel="stylesheet"
-  href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css"
-  type="text/css"
-/>
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js'></script>
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css'
+    type='text/css' />
 
-<script src="/socket.io/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
 
-<span class="lead mb-3">Welcome</span>
-<span id="user" class="lead mb-3"> <%= user.name %></span>
+<span class="lead mb-3" >Welcome</span>
+<span id='user' class="lead mb-3"> <%= user.name %></span>
 
-<div id="map" class="map"></div>
+<div id='map' class="map"> </div>
 
 <script>
-  var fillObjs = [];
-  var requestDetails = {};
-  var req_coordinates = "";
-  var req_latitude = "";
-  var req_longitude = "";
-  var user = document.getElementById("user").textContent;
-  var last_coords = "";
-  // var last_coords = localStorage.getItem("last_coords");
-  var copDetails = {};
-  var map, marker;
-  var coordList = [];
-var map_first_location = '';
-  var socket = io();
-  socket.emit("join", {
-    user: user
-  });
-  //Join a room, roomname is the userId itself!
-  console.log(last_coords)
-  var LatLngFromStorage = localStorage.getItem("LatLng");
-  LatLng = JSON.parse(LatLngFromStorage);
-  console.log('LatLng')
-  console.log(LatLng)
 
-  if (last_coords != null) {
-    var localStorage_map_first_location = localStorage.getItem("LatLng");
-    map_first_location_treated = JSON.parse(localStorage_map_first_location);
-    map_first_location = [
-      map_first_location_treated.lng,
-      map_first_location_treated.lat
-    ];
-  } else {
-    map_first_location = [0, 0];
-  }
-console.log(map_first_location)
-  mapboxgl.accessToken =
-    "pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw";
-  map = new mapboxgl.Map({
-    container: "map",
-    style: "mapbox://styles/mapbox/streets-v11",
-    center: [0, 0], // starting position
-    zoom: 22 // starting zoom
-  });
-  // map.addControl(new MapboxDirections({
-  //     accessToken: mapboxgl.accessToken
-  // }), 'top-left');
-  // Add zoom and rotation controls to the map.
-  map.addControl(new mapboxgl.NavigationControl());
-  map.addControl(new mapboxgl.FullscreenControl());
+var fillObjs = [];
+    var requestDetails = {};
+    var req_coordinates = "";
+    var req_latitude = "";
+    var req_longitude = "";
+    var user = document.getElementById("user").textContent;
 
-  // Add geolocate control to the map.
-  const geolocate = new mapboxgl.GeolocateControl({
-    positionOptions: {
-      enableHighAccuracy: true
-    },
-    trackUserLocation: true,
-    showUserLocation: true
-  });
-  map.addControl(geolocate);
-  map.on("load", function(e) {
-    geolocate.trigger();
-    // var marker = new mapboxgl.Marker()
-    //   .setLngLat([LatLng.lng, LatLng.lat])
-    //   .addTo(map);
-  });
-  geolocate.on("geolocate", function(data) {
-    var userlocation = geolocate._lastKnownPosition;
- 
-    var lat = userlocation.coords.latitude;
-    var lng = userlocation.coords.longitude;
-    var latLngObjs = {
-      lat: "",
-      lng: "",
-      lastupdate : Date()
+    var socket = io();
+    socket.emit("join", {
+      user: user
+    }); 
+    //Join a room, roomname is the userId itself!
+    //Empty variables to store information. This will get filled later
+
+    var copDetails = {};
+    var map, marker;
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw';
+      map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [0, 0], // starting position
+        zoom: 13 // starting zoom
+
+    });
+    map.addControl(new MapboxDirections({
+        accessToken: mapboxgl.accessToken
+    }), 'top-left');
+    // Add zoom and rotation controls to the map.
+    map.addControl(new mapboxgl.NavigationControl());
+
+     // Add geolocate control to the map.
+     const geolocate = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true,
+      showUserLocation: true
+    });
+    map.addControl(geolocate);
+    map.on("load", function() {
+      geolocate.trigger();
+    });
+    geolocate.on("geolocate", function(data) {
+      var userlocation = geolocate._lastKnownPosition;
+
+      var lat = userlocation.coords.latitude;
+      var lng = userlocation.coords.longitude;
+      var latLngObjs = {
+        lat: "",
+        lng: ""
+      };
+      latLngObjs.lat = lat;
+      latLngObjs.lng = lng;
+      localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
+    });
+    var LatLngFromStorage = localStorage.getItem("LatLng");
+    LatLng = JSON.parse(LatLngFromStorage);
+
+   // request driver
+   requestDetails = {
+      citizenId: user,
+      location: {
+        address: LatLng,
+        latitude: LatLng.lat,
+        longitude: LatLng.lng
+      }
     };
-    latLngObjs.lat = lat;
-    latLngObjs.lng = lng;
-    localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
-    console.log('latLngObjs')
-    console.log(latLngObjs)
-    // var initialcoords = {lat : latLngObjs.lat , lng: latLngObjs.lng}
-    // coordList.push([latLngObjs.lng, latLngObjs.lat])
-    // localStorage.setItem("coordList", JSON.stringify(coordList));
+ 
+    console.log(requestDetails );
+    // function requestForHelp() {
+    //   //When button is clicked, emit an event
+    //   socket.emit("request-for-help", requestDetails);
+    //   console.log("request-for-help");
+    //   console.log(requestDetails);
+    // }
+    //Listen for a 'request-accepted' event
+    // socket.on("request-accepted", function(data) {
+    //   copDetails = data; //Save cop details
+    //   //Display Cop details
+    //   document.getElementById("notification").innerHTML =
+    //     "A cop is coming to your rescue! \n" + JSON.stringify(copDetails);
+    //   //Show cop location on the map
+    //   L.marker(
+    //     [copDetails.location.latitude, copDetails.location.longitude],
+    //     {
+    //       icon: L.icon({
+    //         iconUrl: "/images/police.png",
+    //         iconSize: [60, 28]
+    //       })
+    //     }
+    //   ).addTo(map);
+    // });
 
-    
-  //   var timer = window.setInterval(function() {
-  //   if (lat != latLngObjs.lat && lng != latLngObjs.lng) {
-  //     console.log('Diferent position')
-      
-  //     coordList.push({lat : latLngObjs.lat , lng: latLngObjs.lng});
-  //   localStorage.setItem("coordList", JSON.stringify(coordList));
+    map.on("click", function(e) {
+      // coordinates = e.lngLat;
+      // console.log(coordinates.lng);
+    });
 
-  //   console.log('coordinates');
-  //   console.log(coordList);
-  //   marker = new mapboxgl.Marker()
-  //     .setLngLat(coordinates)
-  //     .setPopup(
-  //       new mapboxgl.Popup({ offset: 25 }) // add popups
-  //         .setHTML("<h3>" + marker + "</h3><p>" + coordinates + "</p>")
-  //     )
-  //     .addTo(map);
+    map.on("load", function(e) {
+      // req_coordinates = e.lngLat;
+      // // map.flyTo({
+      // //   center: req_coordinates
+      // //   // center: [-43.00603, -22.85096]
+      // // });
+      // var marker = new mapboxgl.Marker()
+      //   .setLngLat([-43.00603, -22.85096])
+      //   .addTo(map);
+    });
 
-  //     // var marker = new mapboxgl.Marker()
-  //     // .setLngLat([LatLng.lng, LatLng.lat])
-  //     // .addTo(map);
-  //   } else {
-  //     // window.clearInterval(timer);
-  //     console.log('Same location')
-  //   }
-  // }, 60000);
+function getLatLng()
+{
+    var LatLngFromStorage = localStorage.getItem("LatLng");
+    LatLng = JSON.parse(LatLngFromStorage);
+    return LatLng
+}
 
-  });
-
-
-  // request driver
-  requestDetails = {
-    citizenId: user,
-    location: {
-      address: LatLng,
-      latitude: LatLng.lat,
-      longitude: LatLng.lng
-    }
-  };
-
-  console.log('requestDetails');
-  console.log(requestDetails);
-  // function requestForHelp() {
-  //   //When button is clicked, emit an event
-  //   socket.emit("request-for-help", requestDetails);
-  //   console.log("request-for-help");
-  //   console.log(requestDetails);
-  // }
-  //Listen for a 'request-accepted' event
-  // socket.on("request-accepted", function(data) {
-  //   copDetails = data; //Save cop details
-  //   //Display Cop details
-  //   document.getElementById("notification").innerHTML =
-  //     "A cop is coming to your rescue! \n" + JSON.stringify(copDetails);
-  //   //Show cop location on the map
-  //   L.marker(
-  //     [copDetails.location.latitude, copDetails.location.longitude],
-  //     {
-  //       icon: L.icon({
-  //         iconUrl: "/images/police.png",
-  //         iconSize: [60, 28]
-  //       })
-  //     }
-  //   ).addTo(map);
-  // });
-  
-  // var stgetcoordList = localStorage.getItem("coordList");
-
-  // coordList.push(JSON.parse(stgetcoordList));
-
-  // if (stgetcoordList != null && stgetcoordList.length > 0) {
-  //   console.log('stgetcoordList');
-  //   console.log(stgetcoordList);
-  //   coordList.forEach(function(setmarker) {
-  //     // create a DOM element for the marker
-  //     var el = document.createElement("div");
-  //     el.className = "marker";
-  //     el.style.backgroundImage = "public/images/dog_paw.png";
-
-  //     el.addEventListener("click", function() {
-  //       window.alert("your dog has been here");
-  //     });
-
-  //     // add marker to map
-  //     new mapboxgl.Marker(el).setLngLat([setmarker.lng, setmarker.lat]).addTo(map);
-  //   });
-  // }
-  
-  map.on("click", function(e) {
-    coordinates = e.lngLat;
-    console.log('coordinates');
-    console.log(coordinates);
-    coordList.push(coordinates);
-    localStorage.setItem("coordList", JSON.stringify(coordList));
-
-    console.log(coordList);
-    marker = new mapboxgl.Marker()
-      .setLngLat(coordinates)
-      .setPopup(
-        new mapboxgl.Popup({ offset: 25 }) // add popups
-          .setHTML("<h3>" + marker + "</h3><p>" + coordinates + "</p>")
-      )
-      .addTo(map);
-  });
 </script>
+ 
 
-<style>
-  .marker {
-    background-image: url("images/dog_paw.png");
-    background-size: cover;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-  .mapboxgl-popup {
-    max-width: 200px;
-  }
-
-  .mapboxgl-popup-content {
-    text-align: center;
-    font-family: "Open Sans", sans-serif;
-  }
-</style>

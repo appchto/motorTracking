@@ -134,7 +134,15 @@ var marker = new mapboxgl.Marker()
   .setLngLat(setnglat)
   .setPopup(
     new mapboxgl.Popup({ offset: 25 }) // add popups
-      .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
+      .setHTML( ```
+      <h3>  ${marker}  </h3> 
+      
+      <p> ${setnglat} </p>
+
+      <p> ${user} </p>
+      
+      
+      ```)
   )
   .addTo(map);
 var  savedbn = { 
@@ -152,7 +160,7 @@ coords: [
       } else {
         console.log("Same location");
       }
-    }, 60000);
+    }, 5000);
 
 
   });
@@ -227,7 +235,6 @@ function LoadCoordsFromDB() {
       var el = document.createElement("div");
       el.className = "marker";
       el.style.backgroundImage = "public/images/dog_paw.png";
-
       el.addEventListener("click", function() {
         window.alert("your dog has been here");
       });

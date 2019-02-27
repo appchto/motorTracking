@@ -29,6 +29,10 @@
 <div id="map" class="map"></div>
 
 <script>
+  try {
+   var templist = []
+    
+
   var fillObjs = [];
   var requestDetails = {};
   var req_coordinates = "";
@@ -39,21 +43,20 @@
   var map, marker, map_first_location;
   var coordList = [];
 
+  // var localStorage_coordList = localStorage.getItem("coordList");
+  // coordList.push(JSON.parse(localStorage_coordList));
+
   var LatLngFromStorage = localStorage.getItem("LatLng");
   LatLng = JSON.parse(LatLngFromStorage);
-  console.log("LatLng");
-  console.log(LatLng);
 
   var socket = io();
   socket.emit("join", {
     user: user
   });
 
+ 
   var localStorage_last_coords = localStorage.getItem("last_coords");
   last_coords = JSON.parse(localStorage_last_coords);
-
-  console.log("last_coords");
-  console.log(last_coords);
 
   if (last_coords != null) {
     map_first_location = [LatLng.lng, LatLng.lat];
@@ -86,6 +89,7 @@
 
   map.on("load", function(e) {
     geolocate.trigger();
+    LoadCoordsFromDB();
   });
 
   geolocate.on("geolocate", function(data) {
@@ -95,19 +99,18 @@
     var lng = userlocation.coords.longitude;
 
     var latLngObjs = {
-      lat: "",
       lng: "",
+      lat: "",
       lastupdate: Date()
     };
-    latLngObjs.lat = lat;
     latLngObjs.lng = lng;
+    latLngObjs.lat = lat;
 
     localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
 
     localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
-    console.log("last_coords");
-    console.log(last_coords);
 
+ 
     var timer = window.setInterval(function() {
       if (lat != last_coords.lat && lng != last_coords.lng) {
         console.log("Diferent position");
@@ -116,28 +119,42 @@
 
         console.log("last_coords updated");
         console.log(last_coords);
+         // coordinates needs to be = lngLat;
+        // var lnglattreated = [lng, lat];
+        // marker = new mapboxgl.Marker()
+        //   .setLngLat(lnglattreated)
+        //   .setPopup(
+        //     new mapboxgl.Popup({ offset: 25 }) // add popups
+        //       .setHTML("<h3>" + marker + "</h3><p>" + lnglattreated + "</p>")
+        //   )
+        //   .addTo(map);
 
-        localStorage.setItem("coordList", JSON.stringify(latLngObjs));
+   var setnglat = { lng: lng, lat: lat };
+var marker = new mapboxgl.Marker()
+  .setLngLat(setnglat)
+  .setPopup(
+    new mapboxgl.Popup({ offset: 25 }) // add popups
+      .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
+  )
+  .addTo(map);
+var  savedbn = { 
+coords: [ 
+  {
+    lng : coordinates.lng,
+    lat :  coordinates.lat
+        }
+] 
+}
+  var one = JSON.stringify(savedbn)
+  var two = JSON.parse(one)
+  saveToDb(two);
 
-        var stgetcoordList = localStorage.getItem("coordList");
-        coordList.push(JSON.parse(stgetcoordList));
-
-        // coordinates needs to be = lngLat;
-        console.log("coordList");
-        console.log(coordList);
-    var lnglattreated = [LatLng.lng, LatLng.lat];
-
-        marker = new mapboxgl.Marker()
-          .setLngLat(lnglattreated)
-          .setPopup(
-            new mapboxgl.Popup({ offset: 25 }) // add popups
-              .setHTML("<h3>" + marker + "</h3><p>" + lnglattreated + "</p>")
-          )
-          .addTo(map);
       } else {
         console.log("Same location");
       }
     }, 60000);
+
+
   });
 
   // request driver
@@ -149,20 +166,64 @@
       longitude: LatLng.lng
     }
   };
+ 
+   
+  map.on("click", function(e) {
+    coordinates = e.lngLat;
+    // coordinates = lngLat
+    console.log("click coordinates");
+    console.log(coordinates);
 
-  var stgetcoordList = localStorage.getItem("coordList");
-  coordList.push(JSON.parse(stgetcoordList));
-  console.log("coordList.length");
-  console.log(coordList.length);
+   var setnglat = { lng: coordinates.lng, lat: coordinates.lat };
 
-  if (coordList != null && coordList.length > 1) {
-    console.log("stgetcoordList");
-    console.log(stgetcoordList);
-    console.log("coordList");
-    console.log(coordList);
+    var marker = new mapboxgl.Marker()
+      .setLngLat(setnglat)
+      .setPopup(
+        new mapboxgl.Popup({ offset: 25 }) // add popups
+          .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
+      )
+      .addTo(map);
+  // var  savedbn = { location : { 
+  //   coords: [ 
+  //     {
+  //       lng : coordinates.lng,
+  //       lat :  coordinates.lat
+  //           }
+  //   ] 
+  // }
+  // }
+  var  savedbn = { 
+    coords: [ 
+      {
+        lng : coordinates.lng,
+        lat :  coordinates.lat
+            }
+    ] 
+  }
 
-    coordList.forEach(function(marker) {
-      // create a DOM element for the marker
+      var one = JSON.stringify(savedbn)
+      var two = JSON.parse(one)
+      saveToDb(two);
+  });
+
+} catch (error) {
+  console.log(error);
+    
+  }
+
+
+  
+function LoadCoordsFromDB() {
+  console.log('LoadCoordsFromDB')
+
+  $.ajax({
+    type: 'GET', // define the type of HTTP verb we want to use (POST for our form)
+    url: 'coords/listcords', // the url where we want to POST
+    dataType: 'json', // what type of data do we expect back from the server
+  })
+    .done(function (data) {
+     
+      data.forEach(function(marker) {
       var el = document.createElement("div");
       el.className = "marker";
       el.style.backgroundImage = "public/images/dog_paw.png";
@@ -170,28 +231,40 @@
       el.addEventListener("click", function() {
         window.alert("your dog has been here");
       });
-
-      // add marker to map
-      new mapboxgl.Marker(el).setLngLat([marker.lng, marker.lat]).addTo(map);
+      new mapboxgl.Marker(el).setLngLat([marker.coords[0].lng, marker.coords[0].lat]).addTo(map);
     });
-  }
 
-  map.on("click", function(e) {
-    coordinates = e.lngLat;
-    // coordinates = lngLat
-    console.log("coordinates");
-    console.log(coordinates);
-    coordList.push(coordinates);
-    localStorage.setItem("coordList", JSON.stringify(coordList));
+    }).fail(
+       function (jqXHR, textStatus, errorThrown) {
+      console.log(jqXHR.responseText)
+    }
+    );
+  };
 
-    marker = new mapboxgl.Marker()
-      .setLngLat(coordinates)
-      .setPopup(
-        new mapboxgl.Popup({ offset: 25 }) // add popups
-          .setHTML("<h3>" + marker + "</h3><p>" + coordinates + "</p>")
-      )
-      .addTo(map);
-  });
+
+ function saveToDb(dataToSave) {
+  console.log('saveToDb')
+   $.ajax({
+    type: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+    url: 'coords/postcoords', // the url where we want to POST
+    data: dataToSave, // our data object
+    dataType: 'json', // what type of data do we expect back from the server
+    encode: true
+  })
+    // using the done promise callback
+    .done(function (data) {
+      console.log(data)
+  
+      // here we will handle errors and validation messages
+    }).fail(
+       function (jqXHR, textStatus, errorThrown) {
+      console.log(jqXHR.responseText)
+    }
+    );
+
+};
+
+
 </script>
 
 <style>
@@ -211,4 +284,6 @@
     text-align: center;
     font-family: "Open Sans", sans-serif;
   }
+
 </style>
+ 

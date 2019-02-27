@@ -6,6 +6,7 @@ const flash = require('connect-flash');
 const session = require('express-session');
 var http = require("http");
 var routes = require("./routes/routes"); //File that contains our endpoints
+var coords = require("./routes/coords"); 
 
 require('./config/passport')(passport);
 const app = express();
@@ -60,6 +61,7 @@ app.use(function(req, res, next) {
 app.use('/', require('./routes/index.js'));
 app.use('/users', require('./routes/users.js'));
 app.use('/clients', require('./routes/clients.js'));
+app.use('/coords', coords );
 
 const PORT = process.env.PORT || 5001;
 

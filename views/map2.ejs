@@ -135,13 +135,9 @@ var marker = new mapboxgl.Marker()
   .setPopup(
     new mapboxgl.Popup({ offset: 25 }) // add popups
       .setHTML( ```
-      <h3>  ${marker}  </h3> 
+      <h3>  ${user}  </h3> 
       
-      <p> ${setnglat} </p>
-
-      <p> ${user} </p>
-      
-      
+      <p> ${lng} , ${lat}  </p>
       ```)
   )
   .addTo(map);

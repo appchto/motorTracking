@@ -20,4 +20,4 @@ $ npm run dev
 
 
 ```
-https://motortracking.herokuapp.com/maptracker
+https://motortracking.herokuapp.com/map2

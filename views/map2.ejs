@@ -38,11 +38,12 @@
   var req_coordinates = "";
   var req_latitude = "";
   var req_longitude = "";
+  var last_coords = "";
   var user = document.getElementById("user").textContent;
   var copDetails = {};
   var map, marker, map_first_location;
   var coordList = [];
-
+  
   // var localStorage_coordList = localStorage.getItem("coordList");
   // coordList.push(JSON.parse(localStorage_coordList));
 
@@ -93,7 +94,24 @@
   });
 
   geolocate.on("geolocate", function(data) {
-    var userlocation = geolocate._lastKnownPosition;
+    // var userlocation = geolocate._lastKnownPosition;
+
+    // var lat = userlocation.coords.latitude;
+    // var lng = userlocation.coords.longitude;
+
+    // var latLngObjs = {
+    //   lng: "",
+    //   lat: "",
+    //   lastupdate: Date()
+    // };
+    // latLngObjs.lng = lng;
+    // latLngObjs.lat = lat;
+
+    // localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
+ 
+    var timer = window.setInterval(function() {
+
+       var userlocation = geolocate._lastKnownPosition;
 
     var lat = userlocation.coords.latitude;
     var lng = userlocation.coords.longitude;
@@ -108,44 +126,56 @@
 
     localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
 
-    localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
-
- 
-    var timer = window.setInterval(function() {
+      var localStorage_last_coords = localStorage.getItem("last_coords");
+  last_coords = JSON.parse(localStorage_last_coords);
+  console.log("Same location");
+        console.log(last_coords);
+        console.log(last_coords.lat);
+        console.log(lat);
+        console.log(last_coords.lng);
+        console.log(lng);
+  
       if (lat != last_coords.lat && lng != last_coords.lng) {
         console.log("Diferent position");
-
         localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
 
-        console.log("last_coords updated");
-        console.log(last_coords);
          // coordinates needs to be = lngLat;
         // var lnglattreated = [lng, lat];
-        // marker = new mapboxgl.Marker()
-        //   .setLngLat(lnglattreated)
-        //   .setPopup(
-        //     new mapboxgl.Popup({ offset: 25 }) // add popups
-        //       .setHTML("<h3>" + marker + "</h3><p>" + lnglattreated + "</p>")
-        //   )
-        //   .addTo(map);
-
    var setnglat = { lng: lng, lat: lat };
-var marker = new mapboxgl.Marker()
-  .setLngLat(setnglat)
-  .setPopup(
-    new mapboxgl.Popup({ offset: 25 }) // add popups
-      .setHTML( ```
-      <h3>  ${user}  </h3> 
+
+        marker = new mapboxgl.Marker()
+          .setLngLat(setnglat)
+          .setPopup(
+            new mapboxgl.Popup({ offset: 25 }) // add popups
+              .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
+          )
+          .addTo(map);
+
+          var el = document.createElement("div");
+      el.className = "marker";
+      el.style.backgroundImage = "public/images/dog_paw.png";
+      el.addEventListener("click", function() {
+        window.alert("your dog has been here");
+      });
+      new mapboxgl.Marker(el).setLngLat([setnglat.lng, setnglat.lat]).addTo(map);
+
+
+// var marker = new mapboxgl.Marker()
+//   .setLngLat(setnglat)
+//   .setPopup(
+//     new mapboxgl.Popup({ offset: 25 }) // add popups
+//       .setHTML( ```
+//       <h3>  ${user}  </h3> 
       
-      <p> ${lng} , ${lat}  </p>
-      ```)
-  )
-  .addTo(map);
+//       <p> ${lng} , ${lat}  </p>
+//       ```)
+//   )
+//   .addTo(map);
 var  savedbn = { 
 coords: [ 
   {
-    lng : coordinates.lng,
-    lat :  coordinates.lat
+    lng : setnglat.lng,
+    lat :  setnglat.lat
         }
 ] 
 }
@@ -155,8 +185,9 @@ coords: [
 
       } else {
         console.log("Same location");
+    localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
       }
-    }, 5000);
+    }, 1000);
 
 
   });

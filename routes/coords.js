@@ -11,6 +11,25 @@ router.get("/listcords", (req, res) => {
     res.json(coords);
   });
 });
+
+
+router.get("/listcordsUser", (req, res) => {
+
+  var myfind = "";
+  if (req.user == undefined || req.user == null) {
+    myfind = { username: "no Name" };
+  } else if (req.user != undefined || req.user != null) {
+    // { username : " chto@outlook" }
+      myfind = { username : ' '+req.user.name };
+  }
+  Coords.find(myfind, (err, coords) => {
+    if (err) {
+      res.send(err);
+    }
+    res.json(coords);
+  });
+});
+
 router.post("/postcoords", (req, res) => {
   try {
     let newcoords = new Coords(req.body);

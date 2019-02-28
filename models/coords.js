@@ -13,7 +13,12 @@ const coordslSchema = new mongoose.Schema({
   //           }
   //   ] 
   // }
-
+  username : {
+    type: String
+  },
+  userimage : {
+    type: String
+  },
   coords:[{
        lng : {
           type: String

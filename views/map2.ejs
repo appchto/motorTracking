@@ -128,12 +128,6 @@
 
       var localStorage_last_coords = localStorage.getItem("last_coords");
   last_coords = JSON.parse(localStorage_last_coords);
-  console.log("Same location");
-        console.log(last_coords);
-        console.log(last_coords.lat);
-        console.log(lat);
-        console.log(last_coords.lng);
-        console.log(lng);
   
       if (lat != last_coords.lat && lng != last_coords.lng) {
         console.log("Diferent position");
@@ -143,13 +137,13 @@
         // var lnglattreated = [lng, lat];
    var setnglat = { lng: lng, lat: lat };
 
-        marker = new mapboxgl.Marker()
-          .setLngLat(setnglat)
-          .setPopup(
-            new mapboxgl.Popup({ offset: 25 }) // add popups
-              .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
-          )
-          .addTo(map);
+        // marker = new mapboxgl.Marker()
+        //   .setLngLat(setnglat)
+        //   .setPopup(
+        //     new mapboxgl.Popup({ offset: 25 }) // add popups
+        //       .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
+        //   )
+        //   .addTo(map);
 
           var el = document.createElement("div");
       el.className = "marker";
@@ -182,12 +176,15 @@ coords: [
   var one = JSON.stringify(savedbn)
   var two = JSON.parse(one)
   saveToDb(two);
+  LoadCoordsFromDB();
 
       } else {
         console.log("Same location");
     localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
+  LoadCoordsFromDB();
+
       }
-    }, 1000);
+    }, 3000);
 
 
   });

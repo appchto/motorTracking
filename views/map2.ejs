@@ -153,18 +153,6 @@
       });
       new mapboxgl.Marker(el).setLngLat([setnglat.lng, setnglat.lat]).addTo(map);
 
-
-// var marker = new mapboxgl.Marker()
-//   .setLngLat(setnglat)
-//   .setPopup(
-//     new mapboxgl.Popup({ offset: 25 }) // add popups
-//       .setHTML( ```
-//       <h3>  ${user}  </h3> 
-      
-//       <p> ${lng} , ${lat}  </p>
-//       ```)
-//   )
-//   .addTo(map);
 var  savedbn = { 
 coords: [ 
   {
@@ -184,7 +172,7 @@ coords: [
   LoadCoordsFromDB();
 
       }
-    }, 3000);
+    }, 40000);
 
 
   });
@@ -208,13 +196,13 @@ coords: [
 
    var setnglat = { lng: coordinates.lng, lat: coordinates.lat };
 
-    var marker = new mapboxgl.Marker()
-      .setLngLat(setnglat)
-      .setPopup(
-        new mapboxgl.Popup({ offset: 25 }) // add popups
-          .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
-      )
-      .addTo(map);
+    // var marker = new mapboxgl.Marker()
+    //   .setLngLat(setnglat)
+    //   .setPopup(
+    //     new mapboxgl.Popup({ offset: 25 }) // add popups
+    //       .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
+    //   )
+    //   .addTo(map);
   // var  savedbn = { location : { 
   //   coords: [ 
   //     {
@@ -224,19 +212,19 @@ coords: [
   //   ] 
   // }
   // }
-  var  savedbn = { 
-    coords: [ 
-      {
-        lng : coordinates.lng,
-        lat :  coordinates.lat
-            }
-    ] 
-  }
+  // var  savedbn = { 
+  //   coords: [ 
+  //     {
+  //       lng : coordinates.lng,
+  //       lat :  coordinates.lat
+  //           }
+  //   ] 
+  // }
 
-      var one = JSON.stringify(savedbn)
-      var two = JSON.parse(one)
-      saveToDb(two);
-  });
+  //     var one = JSON.stringify(savedbn)
+  //     var two = JSON.parse(one)
+  //     saveToDb(two);
+   });
 
 } catch (error) {
   console.log(error);

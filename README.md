@@ -43,15 +43,6 @@ https://motortracking.herokuapp.com/map2
 ### Routes  
 ```sh
 
-app.use('/', require('./routes/index.js'));
-
-app.use('/users', require('./routes/users.js'));
-
-
-app.use('/clients', require('./routes/clients.js'));
-
-
-app.use('/coords', coords );
 
 ```
 

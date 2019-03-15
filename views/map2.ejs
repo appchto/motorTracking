@@ -89,20 +89,6 @@
     });
 
     geolocate.on("geolocate", function(data) {
-      // var userlocation = geolocate._lastKnownPosition;
-
-      // var lat = userlocation.coords.latitude;
-      // var lng = userlocation.coords.longitude;
-
-      // var latLngObjs = {
-      //   lng: "",
-      //   lat: "",
-      //   lastupdate: Date()
-      // };
-      // latLngObjs.lng = lng;
-      // latLngObjs.lat = lat;
-
-      // localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
 
       var timer = window.setInterval(function() {
         var userlocation = geolocate._lastKnownPosition;
@@ -128,17 +114,7 @@
           console.log("Diferent position");
           localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
 
-          // coordinates needs to be = lngLat;
-          // var lnglattreated = [lng, lat];
           var setnglat = { lng: lng, lat: lat };
-
-          // marker = new mapboxgl.Marker()
-          //   .setLngLat(setnglat)
-          //   .setPopup(
-          //     new mapboxgl.Popup({ offset: 25 }) // add popups
-          //       .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
-          //   )
-          //   .addTo(map);
 
           var el = document.createElement("div");
           el.className = "marker";
@@ -162,12 +138,12 @@
           };
           var one = JSON.stringify(savedbn);
           var two = JSON.parse(one);
-          saveToDb(two);
+           saveToDb(two);
           LoadCoordsFromDB();
         } else {
           console.log("Same location");
-          LoadCoordsFromDB();
-          LoadCoordsFromDBuser();
+           LoadCoordsFromDB();
+           LoadCoordsFromDBuser();
         }
       }, 10000);
     });
@@ -223,7 +199,7 @@
     console.log(error);
   }
 
-  function LoadCoordsFromDB() {
+  async function LoadCoordsFromDB() {
     console.log("LoadCoordsFromDB");
 
     $.ajax({
@@ -232,28 +208,28 @@
       dataType: "json" // what type of data do we expect back from the server
     })
       .done(function(data) {
-        // data.forEach(function(marker) {
-        //    var el = document.createElement("div");
-        //   el.className = "marker";
-        //   el.style.backgroundImage = "public/images/dog_paw.png";
-        //   el.addEventListener("click", function() {
-        //     window.alert("your dog has been here");
-        //   });
-        //   new mapboxgl.Marker(el)
-        //     .setLngLat([marker.coords[0].lng, marker.coords[0].lat])
-        //     .addTo(map);
-        // });
+        data.forEach(function(marker) {
+           var el = document.createElement("div");
+          el.className = "marker";
+          el.style.backgroundImage = "public/images/dog_paw.png";
+          el.addEventListener("click", function() {
+            window.alert("your dog has been here");
+          });
+          new mapboxgl.Marker(el)
+            .setLngLat([marker.coords[0].lng, marker.coords[0].lat])
+            .addTo(map);
+        });
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
         console.log(jqXHR.responseText);
       });
   }
 
-  function LoadCoordsFromDBuser() {
+  async function LoadCoordsFromDBuser() {
     console.log("LoadCoordsFromDBuser");
-    // var userimage = user.userimage;
-    //     console.log('userimage');
-    //     console.log(userimage);
+    var userimage = user.userimage;
+        console.log('userimage');
+        console.log(userimage);
     $.ajax({
       type: "GET", // define the type of HTTP verb we want to use (POST for our form)
       url: "coords/listcordsUser", // the url where we want to POST

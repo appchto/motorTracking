@@ -3,7 +3,15 @@
 <!-- mapbox-gl-directions -->
 <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js"></script>
-
+<link
+  href="https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css"
+  type="text/css"
+/>
 
 
 <style>
@@ -17,9 +25,11 @@
 
 <span id="user" class="lead mb-3"> <%= user.name %></span>
 
+<img id='userimagecard'  src='' />
+
 <span id="userimage" class="" style="display : none">
-  <%= user.userimage %></span
->
+  <%= user.userimage %></span>
+
 
 <div id="map" class="map"></div>
 
@@ -33,15 +43,14 @@
     var req_latitude = "";
     var req_longitude = "";
     var last_coords = "";
-    var LatLng = "";
     var user = document.getElementById("user").textContent;
     var userimage = document.getElementById("userimage").textContent;
     var copDetails = {};
     var map, marker, map_first_location;
     var coordList = [];
-
-    // var localStorage_coordList = localStorage.getItem("coordList");
-    // coordList.push(JSON.parse(localStorage_coordList));
+    
+    var LatLng = {};
+    // var LatLng = "";
 
     var LatLngFromStorage = localStorage.getItem("LatLng");
     LatLng = JSON.parse(LatLngFromStorage);
@@ -85,7 +94,8 @@
 
     map.on("load", function(e) {
       geolocate.trigger();
-      LoadCoordsFromDB();
+      // LoadCoordsFromDB();
+      LoadCoordsFromDBuser();
     });
 
     geolocate.on("geolocate", function(data) {
@@ -139,13 +149,15 @@
           var one = JSON.stringify(savedbn);
           var two = JSON.parse(one);
            saveToDb(two);
-          LoadCoordsFromDB();
+          // LoadCoordsFromDB();
+      LoadCoordsFromDBuser();
+
         } else {
           console.log("Same location");
-           LoadCoordsFromDB();
+          //  LoadCoordsFromDB();
            LoadCoordsFromDBuser();
         }
-      }, 10000);
+      }, 5000);
     });
 
     // request driver
@@ -166,33 +178,26 @@
 
       var setnglat = { lng: coordinates.lng, lat: coordinates.lat };
 
-      // var marker = new mapboxgl.Marker()
-      //   .setLngLat(setnglat)
-      //   .setPopup(
-      //     new mapboxgl.Popup({ offset: 25 }) // add popups
-      //       .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
-      //   )
-      //   .addTo(map);
-      // var  savedbn = { location : {
-      //   coords: [
-      //     {
-      //       lng : coordinates.lng,
-      //       lat :  coordinates.lat
-      //           }
-      //   ]
-      // }
-      // }
-      // var  savedbn = {
-      //   coords: [
-      //     {
-      //       lng : coordinates.lng,
-      //       lat :  coordinates.lat
-      //           }
-      //   ]
-      // }
-
-      //     var one = JSON.stringify(savedbn)
-      //     var two = JSON.parse(one)
+      var marker = new mapboxgl.Marker()
+        .setLngLat(setnglat)
+        .setPopup(
+          new mapboxgl.Popup({ offset: 25 }) // add popups
+            .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
+        )
+        .addTo(map);
+  
+      // var savedbn = {
+      //       username: user,
+      //       userimage: userimage,
+      //       coords: [
+      //         {
+      //           lng: setnglat.lng,
+      //           lat: setnglat.lat
+      //         }
+      //       ]
+      //     };
+      //     var one = JSON.stringify(savedbn);
+      //     var two = JSON.parse(one);
       //     saveToDb(two);
     });
   } catch (error) {
@@ -227,9 +232,6 @@
 
   async function LoadCoordsFromDBuser() {
     console.log("LoadCoordsFromDBuser");
-    var userimage = user.userimage;
-        console.log('userimage');
-        console.log(userimage);
     $.ajax({
       type: "GET", // define the type of HTTP verb we want to use (POST for our form)
       url: "coords/listcordsUser", // the url where we want to POST
@@ -256,7 +258,7 @@
       });
   }
 
- async function saveToDb(dataToSave) {
+  async function saveToDb(dataToSave) {
     console.log("saveToDb");
     $.ajax({
       type: "POST", // define the type of HTTP verb we want to use (POST for our form)
@@ -298,13 +300,5 @@
 
 
 
-<link
-  href="https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css"
-  rel="stylesheet"
-/>
-<link
-  rel="stylesheet"
-  href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css"
-  type="text/css"
-/>
+
 

@@ -13,6 +13,35 @@ describe("Map tests", function() {
     var result = distanceInkm >= 0.5;
     assert.equal(true, result);
   });
+  it("test if true distanceInkm >= 86", function() {
+    distanceInkm = 0.0;
+    var result = distanceInkm >= 86;
+    assert.equal(false, result);
+  });
+  it("test Diferent position", function() {
+    //86 feet
+    var lat1, lon1, lat2, lon2;
+    lat1 = "-22.85118";
+    lon1 = "-43.00758";
+    lat2 = "-22.85133";
+    lon2 = "-43.00764";
+
+  var distancetomark = getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2);
+  var distanceInFeet = convertToFeet(distancetomark);
+  console.log(distanceInFeet);
+  var checkdistance = distanceInFeet >= `${mapConfig.distance2setMaker}`;
+
+  if (lat1 != lon1 && lat2 != lon2 && checkdistance) {
+    assert.equal(true, checkdistance, "Diferent position");
+  console.log("Diferent position");
+} else {
+    assert.equal(false, checkdistance, "same position");
+  console.log("same position");
+}
+
+});
+
+
 
   it("test Diferent position", function() {
       //86 feet

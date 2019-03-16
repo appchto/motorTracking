@@ -1,9 +1,7 @@
 var assert = require("assert");
+var mapConfig = require("../config/mapConfig");
 
 describe("Map tests", function() {
-
-
-
   it("should return images/dog_paw.png", function() {
     var userimage = "/public/images/dog_paw.png";
     userimage = userimage.replace("/public/", "");
@@ -11,11 +9,96 @@ describe("Map tests", function() {
   });
 
   it("test if true", function() {
-    distanceInkm = 1
-    var result  =  distanceInkm >= 1 ;
+    distanceInkm = 0.5;
+    var result = distanceInkm >= 0.5;
     assert.equal(true, result);
   });
 
+  it("test Diferent position", function() {
+      //86 feet
+      var lat1, lon1, lat2, lon2;
+      lat1 = "-22.85088";
+      lon1 = "-43.00601";
+      lat2 = "-22.85111";
+      lon2 = "-43.00608";
+  
+    var distancetomark = getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2);
+    var distanceInFeet = convertToFeet(distancetomark);
+    console.log(distanceInFeet);
+    var checkdistance = distanceInFeet >= `${mapConfig.distance2setMaker}`;
+
+    if (lat1 != lon1 && lat2 != lon2 && checkdistance) {
+      assert.equal(true, checkdistance, "Diferent position");
+    } else {
+      assert.equal(false, checkdistance, "same position");
+    }
+
+  });
+
+  it("test same position", function() {
+    //40.2
+    var lat1, lon1, lat2, lon2;
+    lat1 = "-22.85088";
+    lon1 = "-43.00601";
+    lat2 = "-22.85098";
+    lon2 = "-43.00606";
+
+    var distancetomark = getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2);
+    var distanceInFeet = convertToFeet(distancetomark);
+    console.log(distanceInFeet);
+    var checkdistance = distanceInFeet >= mapConfig.distance2setMaker;
+
+    if (lat1 != lon1 && lat2 != lon2 && checkdistance) {
+    } else {
+      console.log("same position");
+      assert.equal(false, checkdistance, "same position");
+    }
+
+  });
+
+  it("test distanceInkm 40 feet", function() {
+    //40.2
+    var lat1, lon1, lat2, lon2;
+    lat1 = "-22.85088";
+    lon1 = "-43.00601";
+    lat2 = "-22.85098";
+    lon2 = "-43.00606";
+
+    var distancetomark = getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2);
+    var distanceInFeet = convertToFeet(distancetomark);
+    console.log(distanceInFeet);
+    var checkdistance = distanceInFeet >= mapConfig.distance2setMaker;
+    assert.equal(false, checkdistance);
+  });
+
+  it("test distanceInkm  83ft feet", function() {
+    //83ft
+    var lat1, lon1, lat2, lon2;
+    lat1 = "-22.85088";
+    lon1 = "-43.00601";
+    lat2 = "-22.85110";
+    lon2 = "-43.00608";
+
+    var distancetomark = getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2);
+    var distanceInFeet = convertToFeet(distancetomark);
+    console.log(distanceInFeet);
+    var checkdistance = distanceInFeet >= mapConfig.distance2setMaker;
+    assert.equal(false, checkdistance);
+  });
+  it("test distanceInkm >= 86 feet", function() {
+      //86 feet
+    var lat1, lon1, lat2, lon2;
+    lat1 = "-22.85088";
+    lon1 = "-43.00601";
+    lat2 = "-22.85111";
+    lon2 = "-43.00608";
+
+    var distancetomark = getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2);
+    var distanceInFeet = convertToFeet(distancetomark);
+    console.log(distanceInFeet);
+    var checkdistance = distanceInFeet >= mapConfig.distance2setMaker;
+    assert.equal(true, checkdistance);
+  });
 
   it("if diff greater than 1 km", function() {
     var lat1, lon1, lat2, lon2;
@@ -27,13 +110,12 @@ describe("Map tests", function() {
     var value = getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2);
 
     var km = convertToKm(value);
-    km = 2
+    km = 2;
     value = km + " km"; // 1613.8 km
 
     if (km > 1) {
       value = true;
-    }
-    else{
+    } else {
       value = false;
     }
 
@@ -41,7 +123,7 @@ describe("Map tests", function() {
     assert.notEqual(null, value);
     assert.notEqual(undefined, value);
   });
-  
+
   it("if diff less than 1 km", function() {
     var lat1, lon1, lat2, lon2;
     lat1 = "-22.8513380";
@@ -76,12 +158,18 @@ describe("Map tests", function() {
     lat2 = "-22.8513388";
     lon2 = "-43.00616769999999";
     var value = getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2);
-    value =  convertToCm(value) + " cm";
+    value = convertToCm(value) + " cm";
 
-    assert.notEqual(null, convertToCm(value) );
+    assert.notEqual(null, convertToCm(value));
     assert.notEqual(null, value);
     assert.notEqual(undefined, value);
   });
+  function convertToFeet(value) {
+    var Feet = value * 3280.8;
+    Feet = Feet.toFixed(1);
+    return Feet;
+  }
+
   function convertToCm(value) {
     var cm = value * 100000;
     cm = cm.toFixed(1);

@@ -1,15 +1,15 @@
 <!-- mapbox-gl-directions -->
-<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js"></script>
+<!-- <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js"></script> -->
 <script src="https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js"></script>
 <link
   href="https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css"
   rel="stylesheet"
 />
-<link
+<!-- <link
   rel="stylesheet"
   href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.css"
   type="text/css"
-/>
+/> -->
 
 <style>
   .map {
@@ -21,11 +21,12 @@
 <span class="lead mb-3">Welcome</span>
 
 <span id="user" class="lead mb-3"> <%= user.name %></span>
-
+<span id="mapConfig" style="display : none"> <%= mapConfig.distance2setMaker %></span>
 <img id="userimagecard" src="" />
 
 <span id="userimage" class="" style="display : none">
-  <%= user.userimage %></span
+  <%= user.userimage %> 
+  </span
 >
 
 <div id="map" class="map"></div>
@@ -42,6 +43,7 @@
     var last_coords = "";
     var user = document.getElementById("user").textContent;
     var userimage = document.getElementById("userimage").textContent;
+    var mapConfig = document.getElementById("mapConfig").textContent;
     var copDetails = {};
     var map, marker, map_first_location;
     var coordList = [];
@@ -95,7 +97,7 @@
       LoadCoordsFromDBuser();
     });
 
-    geolocate.on("geolocate", function(data) {
+    geolocate.on("geolocate", async function(data) {
 
 
       var latLngObjs = {
@@ -107,7 +109,7 @@
       var localStorage_last_coords = localStorage.getItem("last_coords");
       last_coords = JSON.parse(localStorage_last_coords);
 
-      var timer = window.setInterval(function() {
+      var timer = window.setInterval(async function() {
 
         var userlocation = geolocate._lastKnownPosition;
 
@@ -115,11 +117,10 @@
         var lng = userlocation.coords.longitude;
 
         var distancetomark = getDistanceFromLatLonInKm(lat, lng, LatLng.lat, LatLng.lng);
-        var distanceInkm = convertToKm(distancetomark);
-        var checkdistance = distanceInkm >= mapConfig.distance2setMaker;
-
+        var distanceInFeet = convertToFeet(distancetomark);
+        var checkdistance = distanceInFeet >= mapConfig;
+        
         if (lat != last_coords.lat && lng != last_coords.lng && checkdistance) {
-        // if (lat != last_coords.lat && lng != last_coords.lng) {
           console.log("Diferent position");
 
           localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
@@ -140,9 +141,9 @@
           };
           var one = JSON.stringify(savedbn);
           var two = JSON.parse(one);
-          saveToDb(two);
+           saveToDb(two);
           // LoadCoordsFromDB();
-          LoadCoordsFromDBuser();
+            LoadCoordsFromDBuser();
 
           latLngObjs.lng = lng;
           latLngObjs.lat = lat;
@@ -150,9 +151,10 @@
         } else {
           console.log("Same location");
           //  LoadCoordsFromDB();
-          //  LoadCoordsFromDBuser();
+          // await LoadCoordsFromDBuser();
         }
       }, 5000);
+
       localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
 
     });
@@ -228,6 +230,12 @@
     new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
   }
 
+  function convertToFeet(value) {
+    var Feet = value * 3280.8;
+    Feet = Feet.toFixed(1);
+    return Feet;
+  }
+
   async function LoadCoordsFromDB() {
     $.ajax({
       type: "GET", // define the type of HTTP verb we want to use (POST for our form)
@@ -248,7 +256,9 @@
     $.ajax({
       type: "GET", // define the type of HTTP verb we want to use (POST for our form)
       url: "coords/listcordsUser", // the url where we want to POST
-      dataType: "json" // what type of data do we expect back from the server
+      dataType: "json", // what type of data do we expect back from the server
+      async: true
+
     })
       .done(function(data) {
         data.forEach(function(marker) {
@@ -266,7 +276,8 @@
       url: "coords/postcoords", // the url where we want to POST
       data: dataToSave, // our data object
       dataType: "json", // what type of data do we expect back from the server
-      encode: true
+      encode: true,
+      async: true
     })
       // using the done promise callback
       .done(function(data) {
@@ -279,7 +290,7 @@
       });
   }
 
-  function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  async function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     var R = 6371; // Radius of the earth in km
     var dLat = deg2rad(lat2 - lat1); // deg2rad below
     var dLon = deg2rad(lon2 - lon1);

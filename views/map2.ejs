@@ -1,5 +1,3 @@
-
-
 <!-- mapbox-gl-directions -->
 <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.0/mapbox-gl-directions.js"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js"></script>
@@ -13,7 +11,6 @@
   type="text/css"
 />
 
-
 <style>
   .map {
     height: 600px;
@@ -25,11 +22,11 @@
 
 <span id="user" class="lead mb-3"> <%= user.name %></span>
 
-<img id='userimagecard'  src='' />
+<img id="userimagecard" src="" />
 
 <span id="userimage" class="" style="display : none">
-  <%= user.userimage %></span>
-
+  <%= user.userimage %></span
+>
 
 <div id="map" class="map"></div>
 
@@ -48,7 +45,7 @@
     var copDetails = {};
     var map, marker, map_first_location;
     var coordList = [];
-    
+
     var LatLng = {};
     // var LatLng = "";
 
@@ -99,6 +96,14 @@
     });
 
     geolocate.on("geolocate", function(data) {
+      var latLngObjs = {
+        lng: "",
+        lat: "",
+        lastupdate: Date()
+      };
+
+      var localStorage_last_coords = localStorage.getItem("last_coords");
+      last_coords = JSON.parse(localStorage_last_coords);
 
       var timer = window.setInterval(function() {
         var userlocation = geolocate._lastKnownPosition;
@@ -106,29 +111,23 @@
         var lat = userlocation.coords.latitude;
         var lng = userlocation.coords.longitude;
 
-        var latLngObjs = {
-          lng: "",
-          lat: "",
-          lastupdate: Date()
-        };
-        latLngObjs.lng = lng;
-        latLngObjs.lat = lat;
-
-        localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
-        localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
-
-        var localStorage_last_coords = localStorage.getItem("last_coords");
-        last_coords = JSON.parse(localStorage_last_coords);
-
         if (lat != last_coords.lat && lng != last_coords.lng) {
           console.log("Diferent position");
+          console.log("after position");
+          console.log("lat" + lat);
+          console.log("lat" + last_coords.lat);
+          console.log("lat" + lng);
+          console.log("lat" + last_coords.lng);
+
           localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
 
           var setnglat = { lng: lng, lat: lat };
 
           var el = document.createElement("div");
           el.className = "marker";
-          el.style.backgroundImage = userimage;
+          // el.style.backgroundImage = userimage;
+          el.style.backgroundImage = "public/images/dog_paw.png";
+
           el.addEventListener("click", function() {
             window.alert("your dog has been here");
           });
@@ -148,16 +147,21 @@
           };
           var one = JSON.stringify(savedbn);
           var two = JSON.parse(one);
-           saveToDb(two);
+          saveToDb(two);
           // LoadCoordsFromDB();
-      LoadCoordsFromDBuser();
+          LoadCoordsFromDBuser();
 
+          latLngObjs.lng = lng;
+          latLngObjs.lat = lat;
+          localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
         } else {
           console.log("Same location");
           //  LoadCoordsFromDB();
-           LoadCoordsFromDBuser();
+          //  LoadCoordsFromDBuser();
         }
       }, 5000);
+
+      localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
     });
 
     // request driver
@@ -172,20 +176,27 @@
 
     map.on("click", function(e) {
       coordinates = e.lngLat;
-      // coordinates = lngLat
-      console.log("click coordinates");
-      console.log(coordinates);
 
       var setnglat = { lng: coordinates.lng, lat: coordinates.lat };
 
-      var marker = new mapboxgl.Marker()
-        .setLngLat(setnglat)
-        .setPopup(
-          new mapboxgl.Popup({ offset: 25 }) // add popups
-            .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
-        )
+      // var marker = new mapboxgl.Marker()
+      //   .setLngLat(setnglat)
+      //   .setPopup(
+      //     new mapboxgl.Popup({ offset: 25 }) // add popups
+      //       .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
+      //   )
+      //   .addTo(map);
+
+      var el = document.createElement("div");
+      el.className = "marker";
+      el.style.backgroundImage = userimage;
+      el.addEventListener("click", function() {
+        window.alert("your dog has been here");
+      });
+      new mapboxgl.Marker(el)
+        .setLngLat([coordinates.lng, coordinates.lat])
         .addTo(map);
-  
+
       // var savedbn = {
       //       username: user,
       //       userimage: userimage,
@@ -205,8 +216,6 @@
   }
 
   async function LoadCoordsFromDB() {
-    console.log("LoadCoordsFromDB");
-
     $.ajax({
       type: "GET", // define the type of HTTP verb we want to use (POST for our form)
       url: "coords/listcords", // the url where we want to POST
@@ -214,7 +223,7 @@
     })
       .done(function(data) {
         data.forEach(function(marker) {
-           var el = document.createElement("div");
+          var el = document.createElement("div");
           el.className = "marker";
           el.style.backgroundImage = "public/images/dog_paw.png";
           el.addEventListener("click", function() {
@@ -231,16 +240,12 @@
   }
 
   async function LoadCoordsFromDBuser() {
-    console.log("LoadCoordsFromDBuser");
     $.ajax({
       type: "GET", // define the type of HTTP verb we want to use (POST for our form)
       url: "coords/listcordsUser", // the url where we want to POST
       dataType: "json" // what type of data do we expect back from the server
     })
       .done(function(data) {
-        console.log("data");
-        console.log(data);
-
         data.forEach(function(marker) {
           var el = document.createElement("div");
           el.className = "marker";
@@ -259,7 +264,6 @@
   }
 
   async function saveToDb(dataToSave) {
-    console.log("saveToDb");
     $.ajax({
       type: "POST", // define the type of HTTP verb we want to use (POST for our form)
       url: "coords/postcoords", // the url where we want to POST
@@ -269,7 +273,7 @@
     })
       // using the done promise callback
       .done(function(data) {
-        console.log(data);
+        console.log("saveToDb");
 
         // here we will handle errors and validation messages
       })
@@ -297,8 +301,3 @@
     font-family: "Open Sans", sans-serif;
   }
 </style>
-
-
-
-
-

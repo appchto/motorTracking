@@ -7,11 +7,30 @@ const session = require('express-session');
 var http = require("http");
 var routes = require("./routes/routes"); //File that contains our endpoints
 var coords = require("./routes/coords"); 
+var cache = require('memory-cache');
 
 require('./config/passport')(passport);
 const app = express();
 
-// Passport Config
+    // configure cache middleware
+    let memCache = new cache.Cache();
+    let cacheMiddleware = (duration) => {
+        return (req, res, next) => {
+            let key =  '__express__' + req.originalUrl || req.url
+            let cacheContent = memCache.get(key);
+            if(cacheContent){
+                res.send( cacheContent );
+                return
+            }else{
+                res.sendResponse = res.send
+                res.send = (body) => {
+                    memCache.put(key,body,duration*1000);
+                    res.sendResponse(body)
+                }
+                next()
+            }
+        }
+    }
 
 // DB Config
 const  db = require('./config/keys');
@@ -61,7 +80,7 @@ app.use(function(req, res, next) {
 app.use('/', require('./routes/index.js'));
 app.use('/users', require('./routes/users.js'));
 app.use('/clients', require('./routes/clients.js'));
-app.use('/coords', coords );
+app.use('/coords',cacheMiddleware(30), coords );
 
 const PORT = process.env.PORT || 5001;
 

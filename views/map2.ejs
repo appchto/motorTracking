@@ -113,27 +113,12 @@
 
         if (lat != last_coords.lat && lng != last_coords.lng) {
           console.log("Diferent position");
-          console.log("after position");
-          console.log("lat" + lat);
-          console.log("lat" + last_coords.lat);
-          console.log("lat" + lng);
-          console.log("lat" + last_coords.lng);
 
           localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
 
           var setnglat = { lng: lng, lat: lat };
 
-          var el = document.createElement("div");
-          el.className = "marker";
-          // el.style.backgroundImage = userimage;
-          el.style.backgroundImage = "public/images/dog_paw.png";
-
-          el.addEventListener("click", function() {
-            window.alert("your dog has been here");
-          });
-          new mapboxgl.Marker(el)
-            .setLngLat([setnglat.lng, setnglat.lat])
-            .addTo(map);
+          // getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) 
 
           var savedbn = {
             username: user,
@@ -178,25 +163,8 @@
       coordinates = e.lngLat;
 
       var setnglat = { lng: coordinates.lng, lat: coordinates.lat };
-
-      // var marker = new mapboxgl.Marker()
-      //   .setLngLat(setnglat)
-      //   .setPopup(
-      //     new mapboxgl.Popup({ offset: 25 }) // add popups
-      //       .setHTML("<h3>" + marker + "</h3><p>" + setnglat + "</p>")
-      //   )
-      //   .addTo(map);
-
-      var el = document.createElement("div");
-      el.className = "marker";
-      el.style.backgroundImage = userimage;
-      el.addEventListener("click", function() {
-        window.alert("your dog has been here");
-      });
-      new mapboxgl.Marker(el)
-        .setLngLat([coordinates.lng, coordinates.lat])
-        .addTo(map);
-
+ 
+      SetMarkerToLocation(coordinates.lng, coordinates.lat);
       // var savedbn = {
       //       username: user,
       //       userimage: userimage,
@@ -215,6 +183,43 @@
     console.log(error);
   }
 
+  async function SetMarkerToLocation(lng, lat) {
+    var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+    });
+    map.getCanvas().style.cursor = "pointer";
+    let userimagetreated = userimage.replace('public/', '')
+
+    var el = document.createElement("div");
+    el.className = "marker";
+    el.style.backgroundImage = userimage;
+
+    el.addEventListener("mouseover", function() {
+      popup
+        .setLngLat([lng, lat])
+        .setHTML(
+          "<h3>" +
+            user +
+            "</h3>" +
+            "<img src='" +
+            userimagetreated +
+            "' />"+
+            "<p> Here is you position: lng and lat = " +
+             [lng, lat] +
+            "</p>" 
+           
+        )
+        .addTo(map);
+    });
+    el.addEventListener("mouseleave", function() {
+      map.getCanvas().style.cursor = "";
+      popup.remove();
+    });
+
+    new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
+  }
+
   async function LoadCoordsFromDB() {
     $.ajax({
       type: "GET", // define the type of HTTP verb we want to use (POST for our form)
@@ -223,15 +228,7 @@
     })
       .done(function(data) {
         data.forEach(function(marker) {
-          var el = document.createElement("div");
-          el.className = "marker";
-          el.style.backgroundImage = "public/images/dog_paw.png";
-          el.addEventListener("click", function() {
-            window.alert("your dog has been here");
-          });
-          new mapboxgl.Marker(el)
-            .setLngLat([marker.coords[0].lng, marker.coords[0].lat])
-            .addTo(map);
+          SetMarkerToLocation(marker.coords[0].lng, marker.coords[0].lat);
         });
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
@@ -247,15 +244,7 @@
     })
       .done(function(data) {
         data.forEach(function(marker) {
-          var el = document.createElement("div");
-          el.className = "marker";
-          el.style.backgroundImage = marker.userimage;
-          el.addEventListener("click", function() {
-            window.alert("your dog has been here");
-          });
-          new mapboxgl.Marker(el)
-            .setLngLat([marker.coords[0].lng, marker.coords[0].lat])
-            .addTo(map);
+          SetMarkerToLocation(marker.coords[0].lng, marker.coords[0].lat);
         });
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
@@ -281,6 +270,26 @@
         console.log(jqXHR.responseText);
       });
   }
+
+  function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2 - lat1); // deg2rad below
+    var dLon = deg2rad(lon2 - lon1);
+    var a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return d;
+  }
+  function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+  }
+
+
 </script>
 
 <style>
@@ -299,5 +308,9 @@
   .mapboxgl-popup-content {
     text-align: center;
     font-family: "Open Sans", sans-serif;
+  }
+  .mapboxgl-popup {
+    max-width: 400px;
+    font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
   }
 </style>

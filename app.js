@@ -8,6 +8,7 @@ var http = require("http");
 var routes = require("./routes/routes"); //File that contains our endpoints
 var coords = require("./routes/coords"); 
 var cache = require('memory-cache');
+const path = require('path')
 
 require('./config/passport')(passport);
 const app = express();
@@ -46,7 +47,9 @@ mongoose
 // EJS
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
-app.use(express.static("./public")); //setting the folder name (public) where all the static files like css, js, images etc are made available
+
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Express body parser
 app.use(express.urlencoded({ extended: true }));

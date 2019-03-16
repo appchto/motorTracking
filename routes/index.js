@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { ensureAuthenticated } = require('../config/auth');
+const mapConfig = require('../config/mapConfig');
 
 // Welcome Page
 router.get('/', (req, res) => res.render('welcome', {
@@ -14,6 +15,7 @@ router.get('/map', ensureAuthenticated, (req, res) => res.render('map', {
 // 
 router.get('/map2', ensureAuthenticated, (req, res) => res.render('map2', {
   user: req.user,
+  mapConfig: mapConfig,
 })
 );
 

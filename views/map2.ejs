@@ -96,6 +96,8 @@
     });
 
     geolocate.on("geolocate", function(data) {
+
+
       var latLngObjs = {
         lng: "",
         lat: "",
@@ -106,12 +108,18 @@
       last_coords = JSON.parse(localStorage_last_coords);
 
       var timer = window.setInterval(function() {
+
         var userlocation = geolocate._lastKnownPosition;
 
         var lat = userlocation.coords.latitude;
         var lng = userlocation.coords.longitude;
 
-        if (lat != last_coords.lat && lng != last_coords.lng) {
+        var distancetomark = getDistanceFromLatLonInKm(lat, lng, LatLng.lat, LatLng.lng);
+        var distanceInkm = convertToKm(distancetomark);
+        var checkdistance = distanceInkm >= mapConfig.distance2setMaker;
+
+        if (lat != last_coords.lat && lng != last_coords.lng && checkdistance) {
+        // if (lat != last_coords.lat && lng != last_coords.lng) {
           console.log("Diferent position");
 
           localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
@@ -145,8 +153,8 @@
           //  LoadCoordsFromDBuser();
         }
       }, 5000);
-
       localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
+
     });
 
     // request driver

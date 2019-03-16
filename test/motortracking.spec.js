@@ -1,11 +1,21 @@
 var assert = require("assert");
 
 describe("Map tests", function() {
+
+
+
   it("should return images/dog_paw.png", function() {
     var userimage = "/public/images/dog_paw.png";
     userimage = userimage.replace("/public/", "");
     assert.equal("images/dog_paw.png", userimage);
   });
+
+  it("test if true", function() {
+    distanceInkm = 1
+    var result  =  distanceInkm >= 1 ;
+    assert.equal(true, result);
+  });
+
 
   it("if diff greater than 1 km", function() {
     var lat1, lon1, lat2, lon2;

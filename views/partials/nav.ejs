@@ -24,18 +24,15 @@
               <li>  <a class="nav-link" href="/map">Map</a></li>
               <li>  <a class="nav-link" href="/map2">Map Tracker</a></li>
 
-              <% if(typeof user != 'undefined'){ %>
-                <% if( user.name == 'Jose Barbosa'){ %>
-                    <li >
-                            <a class="nav-link" href="/users/ManageUsers">ManageUsers</a>
-                        </li>
-                        <li >
-                            <a class="nav-link" href="/clients/ManageClients">ManageClients</a>
-                        </li>
-                    <% } %>
-                <% } %>
+              <% if(typeof user != 'undefined'){ %> <% if( user.manager){ %>
+              
+                <li >
+                  <a class="nav-link" href="/users/ManageUsers">ManageUsers</a>
+              </li>
+           
+                <% } %> <% } %>
 
-
+           
         </ul>
         <ul class="nav navbar-nav navbar-right">
 

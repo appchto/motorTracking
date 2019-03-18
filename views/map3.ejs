@@ -9,6 +9,9 @@
   .map {
     height: 600px;
   }
+
+  
+
 </style>
 
 <span class="lead mb-3">Welcome</span>
@@ -20,7 +23,6 @@
 >
 
 <img id="userimagecard" src="" />
-<%= user.userimage %>
 
 <span id="userimage" class="" style="display : none">
   <%= user.userimage %>
@@ -44,7 +46,8 @@
     var copDetails = {};
     var map, marker, map_first_location;
     var coordList = [];
-
+    var userimagecard = document.getElementById("userimagecard");
+    userimagecard.src = userimage
 
 
     var LatLng = {};
@@ -83,8 +86,9 @@
       positionOptions: {
         enableHighAccuracy: true
       },
-      trackUserLocation: true,
-      showUserLocation: true
+      trackUserLocation: true
+      //  ,showUserLocation: true
+      
     });
 
     map.addControl(geolocate);
@@ -116,6 +120,9 @@
       last_coords = JSON.parse(localStorage_last_coords);
 
        window.setInterval(async function() {
+
+     await SetMarkerToLocation(lng, lat);
+
         var distancetomark = getDistanceFromLatLonInKm(
           lat,
           lng,
@@ -162,7 +169,7 @@
       coordinates = e.lngLat;
 
       var setnglat = { lng: coordinates.lng, lat: coordinates.lat };
-
+      removeMarkerToLocation()
     await SetMarkerToLocation(coordinates.lng, coordinates.lat);
    
     var savedbn = {
@@ -175,9 +182,9 @@
               }
             ]
           };
-          await saveToDb(savedbn);
+          // await saveToDb(savedbn);
 
-          await LoadCoordsFromDBuser();
+          // await LoadCoordsFromDBuser();
 
     });
 
@@ -186,16 +193,29 @@
     // });
   
     async function SetMarkerToLocation(lng, lat) {
+      removeMarkerToLocation()
 
-  var el = document.createElement("div");
-  el.className = "marker";
-  el.style.backgroundImage = 'url(' + userimage + ')'
+      const myElement = document.querySelector('.marker');
 
-  new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
+      var markerEl = document.createElement("div");
+      markerEl.className = "marker";
+      markerEl.style.backgroundImage = 'url(' + userimage + ')';
+      var marker = new mapboxgl.Marker(markerEl);
+      if (!myElement) {
+        marker.setLngLat([lng, lat]).addTo(map);
+      }
 
+    }
 
+    async function removeMarkerToLocation() {
 
-  }
+      let sel = 'marker'
+      var myElement = document.querySelector("." + sel );
+      if (myElement) {
+        myElement.remove();
+      }
+    }
+
 
   async function SetMarkerPopupToLocation(lng, lat) {
   var popup = new mapboxgl.Popup({
@@ -338,3 +358,5 @@
     font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
   }
 </style>
+
+

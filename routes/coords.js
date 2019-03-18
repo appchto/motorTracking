@@ -33,17 +33,13 @@ router.get("/listcordsUser", (req, res) => {
 router.post("/postcoords", (req, res) => {
   try {
     let newcoords = new Coords(req.body);
-    console.log(newcoords);
     newcoords.save((error, coords) => {
       if (error) {
-        console.log(error);
         return error;
       }
-        console.log(coords);
         res.json(coords);
     });
   } catch (error) {
-    console.log(error);
     res.json(error);
   }
 });

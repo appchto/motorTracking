@@ -18,7 +18,11 @@ router.get('/map2', ensureAuthenticated, (req, res) => res.render('map2', {
   mapConfig: mapConfig
 })
 );
-
+router.get('/map3', ensureAuthenticated, (req, res) => res.render('map3', {
+  user: req.user,
+  mapConfig: mapConfig
+})
+);
 router.get('/about', (req, res) => res.render('about', {
   user: req.user
 }));

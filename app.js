@@ -9,9 +9,14 @@ var routes = require("./routes/routes"); //File that contains our endpoints
 var coords = require("./routes/coords"); 
 var cache = require('memory-cache');
 const path = require('path')
+var bodyParser = require('body-parser')
 
 require('./config/passport')(passport);
 const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 
     // configure cache middleware
     let memCache = new cache.Cache();
@@ -44,16 +49,7 @@ mongoose
   )  .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));
 
-// EJS
-app.use(expressLayouts);
-app.set('view engine', 'ejs');
-
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Express body parser
-app.use(express.urlencoded({ extended: true }));
-
+  
 // Express session
 app.use(
   session({
@@ -63,7 +59,8 @@ app.use(
   })
 );
 
-// Passport middleware
+
+  // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -79,11 +76,26 @@ app.use(function(req, res, next) {
   next();
 });
 
+
+
+// EJS
+app.use(expressLayouts);
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'ejs');
+
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Express body parser
+app.use(express.urlencoded({ extended: true }));
+
+
+
 // Routes
 app.use('/', require('./routes/index.js'));
 app.use('/users', require('./routes/users.js'));
 app.use('/clients', require('./routes/clients.js'));
-app.use('/coords',cacheMiddleware(30), coords );
+app.use('/coords', coords  );
 
 const PORT = process.env.PORT || 5001;
 

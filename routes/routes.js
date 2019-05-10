@@ -26,6 +26,11 @@ function initialize(app, db, socket, io) {
         });
     });
 
+    socket.on('sending_coords', function(eventData) {
+
+        console.log("recieved coords")
+    });
+
     //Listen to a 'request-for-help' event from connected citizens
     socket.on('request-for-help', function(eventData) {
         /*

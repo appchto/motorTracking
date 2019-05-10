@@ -95,7 +95,8 @@
 
     map.on("load",async function(e) {
       geolocate.trigger();
-      await LoadCoordsFromDBuser();
+      // await LoadCoordsFromDBuser();
+      LoadCoordsFromDB()
     });
 
     geolocate.on("geolocate", async function(data) {

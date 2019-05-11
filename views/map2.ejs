@@ -231,7 +231,7 @@
     }
     async function SetMarkerToLocationDistant(lng, lat) {
 
-      if(my_last_coords != null || my_last_coords != undefined) {
+      if(my_last_coords != (null || ""  ) ) {
 
         var distancetomark = getDistanceFromLatLonInKm(
           lat,
@@ -252,7 +252,7 @@
 
         }
       }
-      else{
+      else if(my_last_coords == (null || "") ) {
 
         var el = document.createElement("div");
           el.className = "marker";

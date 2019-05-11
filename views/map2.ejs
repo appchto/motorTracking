@@ -249,6 +249,8 @@
           el.className = "marker";
           el.style.backgroundImage = 'url(' + userimage + ')'
           new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
+          
+          my_last_coords = {lng:lng, lat : lat};
 
         }
       }

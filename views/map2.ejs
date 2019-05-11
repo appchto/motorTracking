@@ -64,10 +64,8 @@
 
     socket.on("sending_coords", function (data) {
       document.getElementById("notification").innerHTML =
-        "data: \n" + JSON.stringify(data)
-        + "[0]: \n" + JSON.stringify(data[0])
-        + "[1]: \n" + JSON.stringify(data[1]);
-        SetMarkerToLocation(data[0], data[1]);
+        "data: \n" + JSON.stringify(data);
+        SetMarkerToLocation(data.lng, data.lat);
 
     });
 

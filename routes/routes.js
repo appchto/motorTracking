@@ -28,13 +28,13 @@ function initialize(app, db, socket, io) {
 
     socket.on('sending_coords', function(eventData) {
         console.log("recieved coords from android")
-      io.sockets.emit('sending_coords', eventData);
+        socket.emit('sending_coords', eventData);
 
     });
     socket.on('join', function(eventData) {
 
         console.log("join from android")
-      io.sockets.emit('join', eventData);
+        socket.emit('join', eventData);
 
     });
     //Listen to a 'request-for-help' event from connected citizens

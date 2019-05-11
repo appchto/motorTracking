@@ -1,6 +1,7 @@
 <script src="static/mapbox-gl.js"></script>
 
 <link href="static/mapbox-gl.css" rel="stylesheet" />
+<script src="/socket.io/socket.io.js"></script>
 
 <style>
   .map {
@@ -8,7 +9,10 @@
   }
 </style>
 
-<div id="notification" ></div>
+<h4 id="notification"></h4>
+<button onclick="sending_coords()">
+  sending_coords
+</button>
 
 <span class="lead mb-3">Welcome</span>
 
@@ -43,7 +47,25 @@
     var map, marker, map_first_location;
     var coordList = [];
 
+    var socket = io();
+    socket.emit("join", {
+      user: user
+    });
 
+    function sending_coords() {
+      var coords = "coords"
+      socket.emit("sending_coords", coords);
+      console.log("sending_coords");
+      console.log(coords);
+    }
+    socket.on("join", function (data) {
+      document.getElementById("notification").innerHTML =
+        "data: \n" + JSON.stringify(data);
+    });
+    socket.on("sending_coords", function (data) {
+      document.getElementById("notification").innerHTML =
+        "data: \n" + JSON.stringify(data);
+    });
 
     var LatLng = {};
     // var LatLng = "";
@@ -93,15 +115,7 @@
       // await LoadCoordsFromDB();
     });
 
-    socket.on("join", function(data) {
 
-      document.getElementById("notification").innerHTML =
-        "data: \n" + JSON.stringify(data);
-    });
-    socket.on("sending_coords", function(data) {
-      document.getElementById("notification").innerHTML =
-        "data: \n" + JSON.stringify(data);
-    });
     geolocate.on("geolocate", async function (data) {
 
       // console.log(data.coords.longitude, data.coords.latitude)
@@ -177,11 +191,11 @@
         username: user,
         userimage: userimage,
         router_name: {
-            type: String
+          type: String
 
-          },
+        },
         routes: [{
-       
+
           coords: [{
             lng: coordinates.lng,
             lat: coordinates.lat
@@ -208,7 +222,7 @@
       el.style.backgroundImage = 'url(' + userimage + ')'
 
       new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
- 
+
     }
 
     async function SetMarkerPopupToLocation(lng, lat) {

@@ -67,9 +67,9 @@
       document.getElementById("notification").innerHTML =
         "data: \n" + JSON.stringify(data);
       SetMarkerToLocationDistant(data.lng, data.lat);
-      my_last_coords = data;
+
       document.getElementById("notification").innerHTML +=
-        "\ndata: " + JSON.stringify(my_last_coords);
+        "\my_last_coords: " + JSON.stringify(my_last_coords);
     });
 
     var LatLng = {};
@@ -258,6 +258,8 @@
           el.className = "marker";
           el.style.backgroundImage = 'url(' + userimage + ')'
           new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
+      my_last_coords = {lng:lng, lat : lat};
+
       }
 
     }

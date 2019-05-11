@@ -56,13 +56,17 @@
       var coords = "coords"
       socket.emit("sending_coords", coords);
     }
+
     socket.on("join", function (data) {
       document.getElementById("notification").innerHTML =
         "data: \n" + JSON.stringify(data);
     });
+    
     socket.on("sending_coords", function (data) {
       document.getElementById("notification").innerHTML =
         "data: \n" + JSON.stringify(data);
+        SetMarkerToLocation(data.lng, data.lat);
+
     });
 
     var LatLng = {};
@@ -109,7 +113,7 @@
 
     map.on("load", async function (e) {
       geolocate.trigger();
-      await LoadCoordsFromDBuser();
+     // await LoadCoordsFromDBuser();
       // await LoadCoordsFromDB();
     });
 
@@ -124,7 +128,6 @@
       };
 
       var userlocation = geolocate._lastKnownPosition;
-      console.log(userlocation)
       var lat = userlocation.coords.latitude;
       var lng = userlocation.coords.longitude;
       latLngObjs.lng = lng;
@@ -147,7 +150,6 @@
         var checkdistance = distanceInFeet >= feetConfig;
 
         if (lat != last_coords.lat && lng != last_coords.lng && checkdistance) {
-          console.log("Diferent position");
 
           localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
 
@@ -166,12 +168,12 @@
           //   var two = JSON.parse(one);
           //  await saveToDb(two);
 
-          await LoadCoordsFromDBuser();
+          //await LoadCoordsFromDBuser();
 
           localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
 
         } else {
-          await LoadCoordsFromDBuser();
+         // await LoadCoordsFromDBuser();
         }
       }, 5000);
 

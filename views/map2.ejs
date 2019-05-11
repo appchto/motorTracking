@@ -68,6 +68,8 @@
         "data: \n" + JSON.stringify(data);
       SetMarkerToLocationDistant(data.lng, data.lat);
       my_last_coords = data;
+      document.getElementById("notification").innerHTML +=
+        "\ndata: " + JSON.stringify(my_last_coords);
     });
 
     var LatLng = {};
@@ -241,7 +243,7 @@
         let feetConfig = parseInt(mapConfig, 10);
         var checkdistance = distanceInFeet >= feetConfig;
 
-        if (lat != my_last_coords.lat && lng != my_last_coords.lng && checkdistance) {
+        if (lat != my_last_coords.lat && lng != my_last_coords.lng && checkdistance) { 
 
           var el = document.createElement("div");
           el.className = "marker";
@@ -251,7 +253,7 @@
         }
       }
       else{
-        
+
         var el = document.createElement("div");
           el.className = "marker";
           el.style.backgroundImage = 'url(' + userimage + ')'

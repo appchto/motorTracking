@@ -171,7 +171,8 @@
           //await LoadCoordsFromDBuser();
 
           localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
-
+          document.getElementById("notification").innerHTML +=
+        "\nlast_coords: " + JSON.stringify(last_coords);
         } else {
          // await LoadCoordsFromDBuser();
         }

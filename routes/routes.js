@@ -28,7 +28,9 @@ function initialize(app, db, socket, io) {
 
     socket.on('sending_coords', function(eventData) {
         console.log("recieved coords from android")
-        socket.emit('sending_coords', eventData);
+        console.log(eventData)
+       // socket.emit('sending_coords', eventData);
+        io.sockets.emit('sending_coords', eventData);
 
     });
     socket.on('join', function(eventData) {

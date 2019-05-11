@@ -55,8 +55,6 @@
     function sending_coords() {
       var coords = "coords"
       socket.emit("sending_coords", coords);
-      console.log("sending_coords");
-      console.log(coords);
     }
     socket.on("join", function (data) {
       document.getElementById("notification").innerHTML =
@@ -184,9 +182,9 @@
       coordinates = e.lngLat;
 
       var setnglat = { lng: coordinates.lng, lat: coordinates.lat };
-
+      socket.emit("sending_coords", setnglat);
       await SetMarkerToLocation(coordinates.lng, coordinates.lat);
-
+/*
       var savedbn = {
         username: user,
         userimage: userimage,
@@ -206,7 +204,7 @@
 
       };
       await saveToDb(savedbn);
-
+*/
       await LoadCoordsFromDBuser();
 
     });

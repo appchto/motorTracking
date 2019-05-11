@@ -165,12 +165,20 @@
       var savedbn = {
         username: user,
         userimage: userimage,
-        coords: [
-          {
+        router_name: {
+            type: String
+
+          },
+        routes: [{
+       
+          coords: [{
             lng: coordinates.lng,
             lat: coordinates.lat
-          }
+          }],
+        }
         ]
+
+
       };
       await saveToDb(savedbn);
 

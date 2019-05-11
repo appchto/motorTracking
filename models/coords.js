@@ -1,25 +1,33 @@
 const mongoose = require('mongoose');
 
 const coordslSchema = new mongoose.Schema({
- 
-  username : {
+
+  _username: {
     type: String
   },
-  userimage : {
+  userimage: {
     type: String
   },
-  coords:[{
-       lng : {
-          type: String
-        },
-        lat: {
-          type: String
-        }
-      }],
-      timestamp : {
-        type: Date,
-        default : Date()
+  router_name: {
+    type: String,
+    default: this._username + Date().toString()
+  },
+  routes: [{
+    coords: [{
+      lng: {
+        type: String
+      },
+      lat: {
+        type: String
       }
+    }],
+  }
+  ],
+
+  timestamp: {
+    type: Date,
+    default: Date()
+  }
 });
 
 const coords = mongoose.model('coords', coordslSchema);

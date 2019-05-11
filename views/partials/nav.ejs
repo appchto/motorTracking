@@ -22,16 +22,14 @@
 
             </ul>
           </li>
-              <li>  <a class="nav-link" href="/map">Map</a></li>
-              <li>  <a class="nav-link" href="/map2">Map Tracker</a></li>
 
-              <% if(typeof user != 'undefined'){ %> <% if( user.manager){ %>
+              <% if(typeof user != 'undefined' && user.manager ){ %> 
               
                 <li >
                   <a class="nav-link" href="/users/ManageUsers">ManageUsers</a>
               </li>
            
-                <% } %> <% } %>
+                <% } %>
 
            
         </ul>

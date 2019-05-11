@@ -1,18 +1,7 @@
 const mongoose = require('mongoose');
 
 const coordslSchema = new mongoose.Schema({
-  // location: { 
-  //   coords: [ 
-  //     {
-  //            lng : {
-  //               type: String
-  //             },
-  //             lat: {
-  //               type: String
-  //             }
-  //           }
-  //   ] 
-  // }
+ 
   username : {
     type: String
   },

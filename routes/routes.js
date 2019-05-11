@@ -27,10 +27,16 @@ function initialize(app, db, socket, io) {
     });
 
     socket.on('sending_coords', function(eventData) {
+        console.log("recieved coords from android")
+      io.sockets.emit('sending_coords', eventData);
 
-        console.log("recieved coords")
     });
+    socket.on('join', function(eventData) {
 
+        console.log("join from android")
+      io.sockets.emit('join', eventData);
+
+    });
     //Listen to a 'request-for-help' event from connected citizens
     socket.on('request-for-help', function(eventData) {
         /*

@@ -8,6 +8,8 @@
   }
 </style>
 
+<div id="notification" ></div>
+
 <span class="lead mb-3">Welcome</span>
 
 <span id="user" class="lead mb-3"> <%= user.name %></span>
@@ -91,6 +93,15 @@
       // await LoadCoordsFromDB();
     });
 
+    socket.on("join", function(data) {
+
+      document.getElementById("notification").innerHTML =
+        "data: \n" + JSON.stringify(data);
+    });
+    socket.on("sending_coords", function(data) {
+      document.getElementById("notification").innerHTML =
+        "data: \n" + JSON.stringify(data);
+    });
     geolocate.on("geolocate", async function (data) {
 
       // console.log(data.coords.longitude, data.coords.latitude)
@@ -197,9 +208,7 @@
       el.style.backgroundImage = 'url(' + userimage + ')'
 
       new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
-
-
-
+ 
     }
 
     async function SetMarkerPopupToLocation(lng, lat) {

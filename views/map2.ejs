@@ -41,12 +41,14 @@
     var req_longitude = "";
     var last_coords = "";
     var my_last_coords = "";
+    var my_first_coords = "";
     var user = document.getElementById("user").textContent;
     var userimage = document.getElementById("userimage").textContent;
     var mapConfig = document.getElementById("mapConfig").textContent;
     var copDetails = {};
     var map, marker, map_first_location;
     var coordList = [];
+    var coordsToLine = [];
 
     var socket = io();
     socket.emit("join", {
@@ -69,7 +71,7 @@
       SetMarkerToLocationDistant(data.lng, data.lat);
 
       document.getElementById("notification").innerHTML +=
-        "\my_last_coords: " + JSON.stringify(my_last_coords);
+        "\n my_last_coords: " + JSON.stringify(my_last_coords);
     });
 
     var LatLng = {};
@@ -93,7 +95,7 @@
       container: "map",
       style: "mapbox://styles/mapbox/streets-v11",
       center: map_first_location, // starting position
-      zoom: 18 // starting zoom
+      zoom: 30 // starting zoom
     });
     // Add zoom and rotation controls to the map.
     map.addControl(new mapboxgl.NavigationControl());
@@ -177,8 +179,7 @@
 
         } else {
           // await LoadCoordsFromDBuser();
-          document.getElementById("notification").innerHTML +=
-            "\nlast_coords: " + JSON.stringify(last_coords);
+
         }
       }, 5000);
 
@@ -189,8 +190,48 @@
       coordinates = e.lngLat;
 
       var setnglat = { lng: coordinates.lng, lat: coordinates.lat };
-      socket.emit("sending_coords", setnglat);
+      
       await SetMarkerToLocation(coordinates.lng, coordinates.lat);
+      if (my_first_coords == null || my_first_coords == "") {
+        my_first_coords = setnglat;
+      }
+      coordsToLine.push([coordinates.lng, coordinates.lat]);
+
+      if (coordsToLine.length > 2) {
+        // map.removeSource('route')
+      //  map.removeLayer('route')
+    
+      var data = {
+              "type": "Feature",
+              "properties": {},
+              "geometry": {
+                "type": "LineString",
+                "coordinates":
+                  coordsToLine
+              }
+            }
+            window.setInterval(function() {
+map.getSource('trace').setData(data);
+}, 2000);
+
+        map.addSource('trace', { type: 'geojson', data: data
+          });
+        map.addLayer({
+          "id": "trace",
+          "type": "line",
+          "source": "trace",
+          "paint": {
+            "line-color": "yellow",
+            "line-opacity": 0.75,
+            "line-width": 5
+          }
+        });
+ 
+      }
+
+
+
+
       /*
             var savedbn = {
               username: user,
@@ -212,7 +253,7 @@
             };
             await saveToDb(savedbn);
       */
-      await LoadCoordsFromDBuser();
+      // await LoadCoordsFromDBuser();
 
     });
 
@@ -226,12 +267,14 @@
       el.className = "marker";
       el.style.backgroundImage = 'url(' + userimage + ')'
 
-      new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
+      new mapboxgl.Marker(el)
+      .setLngLat([lng, lat])
+      .addTo(map);
 
     }
     async function SetMarkerToLocationDistant(lng, lat) {
 
-      if(my_last_coords != (null || ""  ) ) {
+      if (my_last_coords != (null || "")) {
 
         var distancetomark = getDistanceFromLatLonInKm(
           lat,
@@ -243,24 +286,26 @@
         let feetConfig = parseInt(mapConfig, 10);
         var checkdistance = distanceInFeet >= feetConfig;
 
-        if (lat != my_last_coords.lat && lng != my_last_coords.lng && checkdistance) { 
+        if (lat != my_last_coords.lat && lng != my_last_coords.lng && checkdistance) {
 
           var el = document.createElement("div");
           el.className = "marker";
           el.style.backgroundImage = 'url(' + userimage + ')'
           new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
-          
-          my_last_coords = {lng:lng, lat : lat};
+
+          my_last_coords = { lng: lng, lat: lat };
+
+
 
         }
       }
-      else if(my_last_coords == (null || "") ) {
+      else if (my_last_coords == (null || "")) {
 
         var el = document.createElement("div");
-          el.className = "marker";
-          el.style.backgroundImage = 'url(' + userimage + ')'
-          new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
-      my_last_coords = {lng:lng, lat : lat};
+        el.className = "marker";
+        el.style.backgroundImage = 'url(' + userimage + ')'
+        new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
+        my_last_coords = { lng: lng, lat: lat };
 
       }
 
@@ -393,10 +438,12 @@
   .marker {
     /* background-image: url("@{userimage}"); */
     background-size: cover;
-    width: 50px;
-    height: 50px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     cursor: pointer;
+    transform: translate(-50%, -50%);
+
   }
 
   .mapboxgl-popup {

@@ -72,8 +72,6 @@
 
     }
 
-
-
     mapboxgl.accessToken =
       "pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw";
     map = new mapboxgl.Map({
@@ -92,16 +90,12 @@
 
     map.addControl(geolocate);
 
-
     map.on("load", async function (e) {
       //activate position on map
       geolocate.trigger();
       // await LoadCoordsFromDBuser();
 
     });
-
-
-
 
     geolocate.on("geolocate", async function (data) {
 
@@ -148,8 +142,6 @@
 
     });
 
-
-
     map.on("click", async function (e) {
       coordinates = e.lngLat;
 
@@ -181,8 +173,6 @@
       el.className = "marker";
       el.style.backgroundImage = 'url("https://i.imgur.com/MK4NUzI.png")'
       new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
-
-
 
     }
 

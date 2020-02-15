@@ -1,4 +1,18 @@
 <script>
+
+  addEventListener("click", function() {
+      var
+            el = document.documentElement
+          , rfs =
+                 el.requestFullScreen
+              || el.webkitRequestFullScreen
+              || el.mozRequestFullScreen
+      ;
+      rfs.call(el);
+  });
+  </script>
+
+<script>
   var API_DEFAULT_PATH = "/users/";
 
   $(document).ready(function() {

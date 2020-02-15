@@ -1,6 +1,5 @@
-<script src='https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.js'></script>
-<link href='https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.css' rel='stylesheet' />
-
+<script src='/static/mapbox-gl.js'></script>
+<link href='/static/mapbox-gl.css' rel='stylesheet' />
 
 
 <style>
@@ -171,7 +170,7 @@
 
       var el = document.createElement("div");
       el.className = "marker";
-      el.style.backgroundImage = 'url("https://i.imgur.com/MK4NUzI.png")'
+      el.style.backgroundImage = 'url("images/MK4NUzI.png")'
       new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
 
     }

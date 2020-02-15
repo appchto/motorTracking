@@ -26,7 +26,7 @@
 <script>
   try {
     document.documentElement.requestFullscreen();
- 
+
     var templist = [];
 
     var fillObjs = [];
@@ -59,9 +59,9 @@
     if (localStorage_last_coords != null || localStorage_last_coords != undefined) {
       last_coords = JSON.parse(localStorage_last_coords);
 
-      if (last_coords.coords != null ) {
-          map_first_location = [last_coords.coords.latitude, last_coords.coords.longitude];
-        }  else {
+      if (last_coords.coords != null) {
+        map_first_location = [last_coords.coords.latitude, last_coords.coords.longitude];
+      } else {
         map_first_location = [0, 0];
       }
 
@@ -82,6 +82,11 @@
     map.touchZoomRotate.enable();
     map.touchZoomRotate.enableRotation();
     map.touchZoomRotate.enable({ around: 'center' });
+
+    $(document).on('click', '.mapboxgl-ctrl-fullscreen', function (event) {
+      
+    });
+
 
     map.addControl(geolocate);
 
@@ -109,7 +114,7 @@
 
         var userlocation = last_coords;
         var lastKnownLat, lastKnownLng;
-        if (userlocation.coords != null ) {
+        if (userlocation.coords != null) {
           lastKnownLat = userlocation.coords.latitude;
           lastKnownLng = userlocation.coords.longitude;
         } else {
@@ -301,7 +306,7 @@
     console.log(error);
   }
 
- 
+
 
 
 </script>
@@ -330,5 +335,3 @@
     font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
   }
 </style>
-
-

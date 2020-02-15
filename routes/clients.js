@@ -7,7 +7,7 @@ router.get('/ManageClients',  ensureAuthenticated, (req, res) => res.render('Man
     user: req.user
 })
 );
-
+ 
 router.get('/listAllClients',  ensureAuthenticated, (req, res) => {
   Client.find({}, (err, clients) => {
     if (err) {

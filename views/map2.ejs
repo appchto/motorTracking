@@ -1,6 +1,7 @@
-<script src="static/mapbox-gl.js"></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.css' rel='stylesheet' />
 
-<link href="static/mapbox-gl.css" rel="stylesheet" />
+
 
 <style>
   .map {
@@ -41,22 +42,37 @@
     var map, marker, map_first_location;
     var coordList = [];
 
-
+    // Add geolocate control to the map.
+    const geolocate = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true,
+      showUserLocation: true
+    });
 
     var LatLng = {};
     // var LatLng = "";
 
     var LatLngFromStorage = localStorage.getItem("LatLng");
-    LatLng = JSON.parse(LatLngFromStorage);
+    if (LatLngFromStorage != null || LatLngFromStorage != undefined) {
+      LatLng = JSON.parse(LatLngFromStorage);
+
+    }
 
     var localStorage_last_coords = localStorage.getItem("last_coords");
-    last_coords = JSON.parse(localStorage_last_coords);
+    if (localStorage_last_coords != null || localStorage_last_coords != undefined) {
+      last_coords = JSON.parse(localStorage_last_coords);
 
-    if (last_coords != null) {
-      map_first_location = [LatLng.lng, LatLng.lat];
-    } else {
-      map_first_location = [0, 0];
+      if (last_coords != null) {
+        map_first_location = [LatLng.lng, LatLng.lat];
+      } else {
+        map_first_location = [0, 0];
+      }
+
     }
+
+
 
     mapboxgl.accessToken =
       "pk.eyJ1IjoiYXBwY2h0byIsImEiOiJjanM2eHppYTQwdjY5M3lvMXRzZXhoN2dxIn0.x08-MqHl0xfqHaWclzvuZw";
@@ -74,91 +90,68 @@
     map.touchZoomRotate.enableRotation();
     map.touchZoomRotate.enable({ around: 'center' });
 
-    // Add geolocate control to the map.
-    const geolocate = new mapboxgl.GeolocateControl({
-      positionOptions: {
-        enableHighAccuracy: true
-      },
-      trackUserLocation: true,
-      showUserLocation: true
-    });
-
     map.addControl(geolocate);
 
+
     map.on("load", async function (e) {
+      //activate position on map
       geolocate.trigger();
-      await LoadCoordsFromDBuser();
-      // await LoadCoordsFromDB();
+      // await LoadCoordsFromDBuser();
+
     });
+
+
+
 
     geolocate.on("geolocate", async function (data) {
 
-      // console.log(data.coords.longitude, data.coords.latitude)
       var latLngObjs = {
         lng: "",
         lat: "",
         lastupdate: Date()
       };
 
-      var userlocation = geolocate._lastKnownPosition;
-      console.log(userlocation)
-      var lat = userlocation.coords.latitude;
-      var lng = userlocation.coords.longitude;
-      latLngObjs.lng = lng;
-      latLngObjs.lat = lat;
+      var lat = data.coords.latitude;
+      var lng = data.coords.longitude;
 
-      localStorage.setItem("LatLng", JSON.stringify(latLngObjs));
-
-      var localStorage_last_coords = localStorage.getItem("last_coords");
-      last_coords = JSON.parse(localStorage_last_coords);
+      await SetMarkerToLocation(lng, lat);
 
       window.setInterval(async function () {
+
+        var userlocation = geolocate._lastKnownPosition;
+        console.log('_lastKnownPosition')
+        console.log(userlocation)
+        var lastKnownLat = userlocation.coords.latitude;
+        var lastKnownLng = userlocation.coords.longitude;
+
+
         var distancetomark = getDistanceFromLatLonInKm(
           lat,
           lng,
-          last_coords.lat,
-          last_coords.lng
+          lastKnownLat,
+          lastKnownLng
         );
+
+
         var distanceInFeet = convertToFeet(distancetomark);
         let feetConfig = parseInt(mapConfig, 10);
         var checkdistance = distanceInFeet >= feetConfig;
 
-        if (lat != last_coords.lat && lng != last_coords.lng && checkdistance) {
+        if (lat != lastKnownLat && lng != lastKnownLng && checkdistance) {
           console.log("Diferent position");
+          lat = lastKnownLat;
+          lng = lastKnownLng;
 
-          localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
-
-          var setnglat = { lng: lng, lat: lat };
-          //   var savedbn = {
-          //     username: user,
-          //     userimage: userimage,
-          //     coords: [
-          //       {
-          //         lng: setnglat.lng,
-          //         lat: setnglat.lat
-          //       }
-          //     ]
-          //   };
-          //   var one = JSON.stringify(savedbn);
-          //   var two = JSON.parse(one);
-          //  await saveToDb(two);
-
-          await LoadCoordsFromDBuser();
-
-          localStorage.setItem("last_coords", JSON.stringify(latLngObjs));
-
-        } else {
-          await LoadCoordsFromDBuser();
         }
-      }, 5000);
+      }, 10000);
 
 
     });
 
+
+
     map.on("click", async function (e) {
       coordinates = e.lngLat;
-
-      var setnglat = { lng: coordinates.lng, lat: coordinates.lat };
 
       await SetMarkerToLocation(coordinates.lng, coordinates.lat);
 
@@ -172,9 +165,9 @@
           }
         ]
       };
-      await saveToDb(savedbn);
+      // await saveToDb(savedbn);
 
-      await LoadCoordsFromDBuser();
+      // await LoadCoordsFromDBuser();
 
     });
 
@@ -186,8 +179,7 @@
 
       var el = document.createElement("div");
       el.className = "marker";
-      el.style.backgroundImage = 'url(' + userimage + ')'
-
+      el.style.backgroundImage = 'url("https://i.imgur.com/MK4NUzI.png")'
       new mapboxgl.Marker(el).setLngLat([lng, lat]).addTo(map);
 
 
@@ -262,8 +254,6 @@
       })
         .done(function (data) {
           data.forEach(async function (marker) {
-            console.log("marker");
-            console.log(marker);
 
             await SetMarkerToLocation(marker.coords[0].lng, marker.coords[0].lat);
           });

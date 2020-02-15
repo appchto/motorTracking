@@ -8,12 +8,7 @@
 
   <title>Motor Tracking App</title>
   <% include ./partials/header.ejs %>
-
-</head>
-
-<body>
   <script>
-    document.documentElement.webkitRequestFullScreen();
 
     addEventListener("click", function() {
         var
@@ -26,6 +21,10 @@
         rfs.call(el);
     });
     </script>
+</head>
+
+<body>
+
   <% include ./partials/nav %>
 
   <div class="container-fluid"><%- body %></div>

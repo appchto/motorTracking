@@ -1,21 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-   
-    <title>Motor Tracking App</title>
-    <% include ./partials/header.ejs %>
- 
-   
-  </head>
-  <body>
 
-      <% include ./partials/nav %>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <div class="container-fluid"><%- body %></div>
+  <title>Motor Tracking App</title>
+  <% include ./partials/header.ejs %>
 
-    <!-- <% include ./partials/footer %> -->
-  </body>
+</head>
+
+<body>
+  <script>
+    document.documentElement.webkitRequestFullScreen();
+
+    addEventListener("click", function() {
+        var
+              el = document.documentElement
+            , rfs =
+                   el.requestFullScreen
+                || el.webkitRequestFullScreen
+                || el.mozRequestFullScreen
+        ;
+        rfs.call(el);
+    });
+    </script>
+  <% include ./partials/nav %>
+
+  <div class="container-fluid"><%- body %></div>
+
+  <!-- <% include ./partials/footer %> -->
+</body>
+
 </html>

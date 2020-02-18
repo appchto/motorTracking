@@ -20,7 +20,7 @@ router.get("/listcordsUser", (req, res) => {
     myfind = { username: "no Name" };
   } else if (req.user != undefined || req.user != null) {
     // { username : " chto@outlook" }
-      myfind = { username : req.user.name };
+      myfind = { username : req.user.name.trim() };
   }
   Coords.find(myfind, (err, coords) => {
     if (err) {

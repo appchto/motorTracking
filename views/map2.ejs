@@ -7,9 +7,7 @@
     height: 600px;
   }
 </style>
-
-<span class="lead mb-3">Welcome</span>
-
+<p id="demo"></p>
 <span id="user" class="lead mb-3"> <%= user.name %></span>
 
 <span id="mapConfig" style="display : none">
@@ -21,6 +19,8 @@
 <span id="userimage" class="" style="display : none">
   <%= user.userimage %>
 </span>
+<button id="myBtn">Save</button>
+<button id="myBtnLoad">Load</button>
 
 <div id="map" class="map"></div>
 

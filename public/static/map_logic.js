@@ -1,6 +1,5 @@
 try {
 
-
   var last_coords = "";
   var user = document.getElementById("user").textContent.trim();
   var userimage = document.getElementById("userimage").textContent.trim();
@@ -46,10 +45,7 @@ try {
   map.touchZoomRotate.enableRotation();
   map.touchZoomRotate.enable({ around: 'center' });
 
-  $(document).on('click', '.mapboxgl-ctrl-fullscreen', function (event) {
-
-  });
-
+ 
 
   map.addControl(geolocate);
 
@@ -103,6 +99,13 @@ try {
 
         lat = lastKnownLat;
         lng = lastKnownLng;
+
+        temp_coords = {
+          lng: lng,
+          lat: lat
+        }
+
+        coordList.push(temp_coords);
 
       }
     }, 10000);
@@ -177,8 +180,8 @@ try {
       userimage: userimage,
       coords: coordList
     };
-        console.log(savedbn);
-        await saveToDb(savedbn);
+    console.log(savedbn);
+    await saveToDb(savedbn);
     document.getElementById("demo").innerHTML = "";
 
   }
@@ -187,8 +190,8 @@ try {
 
   async function ListenerToLoad() {
     document.getElementById("demo").innerHTML = "Loading Data";
-     await LoadCoordsFromDBuser();
-  
+    await LoadCoordsFromDBuser();
+
     document.getElementById("demo").innerHTML = "";
 
   }
@@ -274,10 +277,10 @@ try {
           element.coords.forEach(async function (marker) {
             console.log(marker);
             await SetMarkerToLocation(marker.lng, marker.lat);
-            });
+          });
         }
-       
-       
+
+
       })
       .fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR.responseText);
@@ -326,3 +329,8 @@ try {
 } catch (error) {
   console.log(error);
 }
+
+$(document).on('click', '.mapboxgl-ctrl-fullscreen', function (event) {
+
+});
+

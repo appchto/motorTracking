@@ -267,10 +267,17 @@ try {
       dataType: "json",
       async: true
     })
-      .done(function (data) {
-        data[0].coords.forEach(async function (marker) {
+      .done(async function (data) {
+        console.log(data);
+        for (let index = 0; index < data.length; index++) {
+          const element = data[index];
+          element.coords.forEach(async function (marker) {
+            console.log(marker);
             await SetMarkerToLocation(marker.lng, marker.lat);
-        });
+            });
+        }
+       
+       
       })
       .fail(function (jqXHR, textStatus, errorThrown) {
         console.log(jqXHR.responseText);
